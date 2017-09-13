@@ -1,0 +1,551 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Swift-CS333. Concurrency and Communication</title>
+
+		<link rel="stylesheet" href="../css/reveal.css">
+		<link rel="stylesheet" href="../css/theme/swift.css">
+		<!-- Theme used for syntax highlighting of code included in main theme -->
+		<!-- Printing and PDF exports -->
+		<script type="text/javascript">
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+ 		</script>
+		<style>
+		#swift-bird{
+      -webkit-clip-path: polygon(10% 0%, 90% 10%, 90% 100%, 10% 90%);
+			clip-path: polygon(10% 0%, 90% 10%, 90% 100%, 10% 90%);
+			/*max-height: 100%*/
+		}
+		</style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="topbar">
+				<div class="breadcrumbs">
+				</div>
+			</div>
+			<div class="slides">
+				<section>
+					<h2><a href="https://xivol.github.io/Swift-CS333/">CS333</a></h2>
+					<h1>Mobile Development</h1>
+					<p>
+						</br>Ilya Loshkarev</br>
+						<a href="mailto:loshkarev.i@gmail.com">loshkarev.i@gmail.com</a>
+					</p>
+					<p class="footer">
+						<br>SFEDU 2017
+					</p>
+				</section>
+				<section>
+					<h3 class="hidden">Overview</h3>
+					<div class="row">
+						<div class="col">
+						<ul>
+							<li>
+								<a href="#/4">Grand Central Dispatch</a>
+							</li>
+							<li>
+								<a href="#/5">Operation Queue</a>
+							</li>
+							<li>
+								<a href="#/2">Key-Value Coding</a>
+							</li>
+							<li>
+								<a href="#/3">Notifications</a>
+							</li>
+						</ul>
+						</div>
+						<div class="col">
+							<img id="swift-bird" src="../img/catch.jpg" />
+						</div>
+					</div>
+				</section>
+<!-- Dispatch	-->
+				<section>
+					<section data-background="../img/grand-central-station.jpg">
+						<h1>Grand Central Dispatch</h1>
+					</section>
+					<section>
+						<h3>Concurrency &amp; Parallelism</h3>
+						<img src="../img/threads.png" alt="Parallelism and Concurrency"/>
+					</section>
+					<section>
+						<h3>Queue Abstraction</h3>
+						<img src="../img/gcd.jpg" alt="GCD Queues" />
+					</section>
+					<section>
+						<h3>Dispatch Queues</h3>
+						<div class="row">
+							<div class="col" style="text-align:right;">
+								Dispatch Queues are objects that maintain a queue of tasks
+								and execute these tasks <br> in their turn
+							</div>
+							<div class="col">
+								<img src="../img/dispatch-queue.png" alt="" />
+							</div>
+						</div>
+					</section>
+					<section>
+						<h3>Queue Type vs Task Type</h3>
+						<table>
+							<tr>
+								<th rowspan="2">Queue</th>
+								<td><code class="hljs-type">concurrent</code></td>
+								<td>unordered</td>
+							</tr>
+							<tr>
+								<td><code class="hljs-type">serial</code></td>
+								<td>ordered</td>
+							</tr>
+							<tr>
+								<th rowspan="2" style="border-bottom:none;">Task</th>
+								<td><code class="hljs-type">async</code></td>
+								<td>non blocking</td>
+							</tr>
+							<tr>
+								<td><code class="hljs-type">sync</code></td>
+								<td>blocking</td>
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h3>Ghost of the Syntax Past</h3>
+						<pre><code class="swift" data-noheader>
+						// Get some queue to put our task into
+						dispatch_async( dispatch_get_global_queue(
+							Int(QOS_CLASS_USER_INITIATED.rawValue), 0) )
+						{
+							/* do some heavy work */
+							dispatch_async(dispatch_get_main_queue()) {
+								/* present results to the user */
+							}
+						}
+						</code></pre>
+						<p class="notice">
+							Depricated since iOS 10.0 👌
+						</p>
+					</section>
+					<section>
+						<h3>Dispatch Queues since Swift 3</h3>
+						<pre><code class="swift" data-noheader>
+						// Get some queue to put our task into
+						DispatchQueue.global(qos: .userInitiated).async {
+							/* do some task */
+							DispatchQueue.main.async {
+								/* present results to the user */
+							}
+						}
+						</code></pre>
+						<p class="notice">
+							Any UI operation should be performed on the main queue
+						</p>
+					</section>
+					<section>
+					<h3>Quality of Service</h3>
+					<pre><code class="swift" data-noheader>
+					.userInteractive  // highest priority
+					.userInitiated
+					.utility          // default
+					.background       // lowest priority
+					</code></pre>
+					<p>
+						System prioritizes and schedules queues <br/>
+						according to their QoS attribute
+					</p>
+				</section>
+					<section>
+						<h3>Creating Dispatch Queues</h3>
+						<pre><code class="swift" data-noheader>
+						let backgroundQueue = DispatchQueue(label: "com.app.queue",
+								qos: .background,
+								attributes: .concurrent)
+
+						backgroundQueue.async {
+							print("Dispatched to background queue")
+						}
+						</code></pre>
+						<p class="notice">
+							Created queue can be accessed by label
+						</p>
+					</section>
+					<section>
+						<h3>Dispatch Groups</h3>
+						<pre><code class="swift" data-noheader>
+							let group = DispatchGroup()
+							DispatchQueue.global().async(group: group){
+								/* do stuff */
+							}
+							group.wait() // wait for every task in group to complete
+
+							group.notify(queue: DispatchQueue.main) {
+								/* do this after every task in the group is completed */
+							}
+						</code></pre>
+						<p>Allow to perform barrier based synchronisation</p>
+					</section>
+					<section>
+						<h3>Dispatch Semaphores</h3>
+						<pre><code class="swift" data-noheader>
+							let semaphore = DispatchSemaphore(value: 10)
+							semaphore.wait()
+								/* access some shared data */
+							semaphore.signal()
+						</code></pre>
+						<p>
+							 Implementation of a traditional counting semaphore
+						</p>
+					</section>
+				</section>
+<!-- Operation Queues -->
+				<section>
+					<section data-background="../img/operation-queue.jpg">
+						<h1>Operation Queues</h1>
+					</section>
+					<section>
+						<h3>Operation</h3>
+						<pre><code class="swift" data-noheader>
+						// Performs the receiver’s non-concurrent task
+						func main()
+						// The block to execute after the operation’s main task is completed
+						var completionBlock: (() -> Void)?
+						</code></pre>
+						<p>
+							An abstract class you use to encapsulate the code and data associated with a single task
+						</p>
+					</section>
+					<section>
+						<h3>Operation Queue</h3>
+						<pre><code class="swift" data-noheader>
+							let q = OperationQueue()
+							q.qualityOfService = .utility
+							q.maxConcurrentOperationCount = 10
+							q.isSuspended = true
+							let op = BlockOperation { /* do stuff */ }
+							op.completionHandler = { /* do other stuff */}
+							q.addOperation(op: op)
+							q.isSuspended = false
+							q.waitUntilAllOperationsAreFinished()
+						</code></pre>
+						<p></p>
+					</section>
+					<section>
+						<h3>Operation Priority &amp; Dependencies</h3>
+						<pre><code class="swift" data-noheader>
+							let op = BlockOperation { /* do stuff */ }
+							op.queuePriority = .high
+							let dependentOp = BlockOperation { /* do other stuff */ }
+							dependantOP.addDependency(op) // requires 'op' to be completed
+							q.addOperation(op)
+						</code></pre>
+						<p>Operation Queue schedules operations according to their dependencies and priority</p>
+					</section>
+					<section>
+						<h3>Operation Status</h3>
+						<pre><code class="swift" data-noheader>
+							var isCancelled: Bool
+							var isReady: Bool
+							var isExecuting: Bool
+							var isFinished: Bool
+							var isConcurrent: Bool
+						</code></pre>
+					</section>
+					<section>
+						<h3>Subclassing Operation</h3>
+						<pre><code class="swift" data-noheader>
+							class FileringOperation: Operation {
+								var filter: CIFilter!
+								weak var imageView: UIImageView?
+								var result: UIImage?
+
+								func main() {
+									if isCanceled { return }
+									if let source = imageView?.image {
+										result = filter.apply(to: source)
+									}
+								}
+							}
+						</code></pre>
+					</section>
+				</section>
+<!-- Key-Value Coding -->
+				<section>
+					<section data-background="../img/key-value.jpg">
+						<h1>Key-Value Coding</h1>
+					</section>
+					<section>
+						<h3>KVC</h3>
+						<p>
+							Key-value coding is a mechanism that allows objects to provide indirect access to their properties
+						</p>
+						<pre><code class="swift" data-noheader>
+							// Returns the value for the property identified by a given key
+							func value(forKey key: String) -> Any?
+							// Sets the property of the receiver specified by a given key to a given value
+							func setValue(_ value: Any?, forKey key: String)
+						</code></pre>
+					</section>
+					<section>
+						<h3>Adopting KVC</h3>
+						<pre><code class="swift" data-noheader>
+							class KVCCompliant: NSObject {
+								dynamic var name: String = ""
+							}
+							let kvc: KVCCompliant
+							kvc.setValue("I'm a KVC Object", forKey: "name")
+						</code></pre>
+						<p class="notice">
+							There is no explicit KVC protocol, but any subclass of <code class="hljs-type">NSObject</code> is KVC compliant
+						</p>
+					</section>
+					<section>
+						<h3>Key-Value Observers</h3>
+						<p>
+							Key-value observing is a mechanism that allows objects to be notified of changes to specified properties of other objects
+						</p>
+						<pre><code class="swift" src="KVO/Observer">
+							func observeValue(forKeyPath keyPath: String?, of object: Any?,
+								change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?)
+						</code></pre>
+						<pre><code class="swift" src="KVO/Observed">
+							func addObserver(_ observer: NSObject, forKeyPath keyPath: String,
+								options: NSKeyValueObservingOptions = [], context: UnsafeMutableRawPointer?)
+							func removeObserver(_ observer: NSObject, forKeyPath keyPath: String)
+						</code></pre>
+					</section>
+					<section>
+						<h3>Responsible Observation</h3>
+						<pre><code class="swift" src="KVO/Observer.swift">
+							class MyObserver: NSObject {
+								var myContext = 88888888
+								override init() {
+									super.init()
+									objectToObserve.addObserver(self,
+												forKeyPath: #keyPath(Observed.propertyName),
+												options: .new, context: &amp;myContext)
+								}
+								deinit {
+									objectToObserve.removeObserver(self,
+												forKeyPath: #keyPath(Observed.propertyName),
+												context: &amp;myContext)
+								}
+							}
+							</code></pre>
+					</section>
+					<section>
+						<h3>Responding to KeyValue Changes</h3>
+						<pre><code class="swift" src="KVO/Observer.swift">
+							override func observeValue(forKeyPath keyPath: String?, of object: Any?,
+									change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+								if context == &amp;myContext {
+									if let newValue = change?[.newKey] {
+										print("Value changed: \(newValue)")
+									}
+								} else {
+									super.observeValue(forKeyPath: keyPath, of: object,
+										change: change, context: context)
+								}
+							}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Considered Harmful!</h3>
+						<ul>
+							<li>Comes through one method</li>
+							<li>Requires you to handle superclasses yourself</li>
+							<li>Obscures control flow</li>
+							<li class="notice">Can crash when deregistering</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Property Observers</h3>
+						<pre><code class="swift" data-noheader>
+							class Note {
+								var content: String {
+									willSet {
+										print("content will be set to \(content)")
+									}
+									didSet {
+										print("content has been set to \(content)")
+									}
+								}
+							}
+						</code></pre>
+					</section>
+				</section>
+<!-- Notifications -->
+				<section>
+					<section data-background="../img/notification.jpeg">
+						<h1>Notifications</h1>
+					</section>
+					<section>
+						<h3>Notification Center</h3>
+						<div class="row">
+							<div class="col">
+							Provides a mechanism for broadcasting information within a program
+							</div>
+							<div class="col">
+							<img src="../img/notificationcenter_2x.png" alt="Notification Center Diagram" />
+							</div>
+						</div>
+						<pre><code class="swift" data-noheader>
+						let defaultCenter = NotificationCenter.default
+						</code></pre>
+					</section>
+					<section>
+					<h3>Notification</h3>
+					<pre><code class="swift" data-noheader>
+					  name: String // unique name
+					  object: AnyObject? // sender
+					  userInfo: [:]? // additional data
+					</code></pre>
+					<p>
+					An object distributed through Notification Center
+					</p>
+					</section>
+					<section>
+					<h3>Post</h3>
+					<pre><code class="swift" data-noheader>
+						defaultCenter.post(name: "MyNotification", object: self)
+						defaultCenter.post(name: "MyNotificationWithPayload",
+							object: self,
+							userInfo: ["payload" : myPayload])
+					</code></pre>
+					<p class="notice">
+						Any notification should have a unique name within an app
+					</p>
+					<p>
+						It is a good idea to store notification names in an enumeration
+					</p>
+					</section>
+					<section>
+						<h3>Observe</h3>
+						<pre><code class="swift" data-noheader>
+							defaultCenter.addObserver(self,
+								selector: #selector(myNotificationHandler),
+								name: "MyNotification", object: sender)
+						</code></pre>
+						<p>
+							Calls <code class="hljs-type">self.myNotificationHandler</code> <br>
+							whenever <code class="hljs-type ">MyNotification</code> is posted
+						</p>
+						<pre><code class="swift" data-noheader>
+							defaultCenter.removeObserver(self,
+								name: "MyNotification", object: sender)
+						</code></pre>
+						<p class="notice">
+							Observers should be removed manually on deinit
+						</p>
+					</section>
+					<section>
+						<h3>Observe with Block</h3>
+						<pre><code class="swift" data-noheader>
+						defaultCenter.addObserver(forName: "MyNotification",
+							object: sender, queue: nil) {
+								[weak self] notification in
+								/* handle notification */
+							}
+						</code></pre>
+						<p>
+							Performs closure in specified queue
+						</p>
+						<p class="notice">
+							Strong references to <code class="hljs-keyword">self</code> in closures <br>
+							can create reference cycles
+						</p>
+					</section>
+					<section>
+						<h3>Concurrency</h3>
+						<pre><code class="swift" data-noheader>
+						DispatchQueue.main.async {
+							defaultCenter.post(name: "MyNotification", object: nil,
+								userInfo: ["data":data])
+						}
+						</code></pre>
+						<p class="notice">
+							Notification centers deliver notifications on the thread <br>
+							in which the notification was posted
+						</p>
+					</section>
+					<section>
+						<h3>Core Data Notifications</h3>
+						<pre><code class="swift" data-noheader>
+						defaultCenter.addObserver(self,
+							selector: #selector(managedObjectContextObjectsDidChange),
+							name: NSManagedObjectContextObjectsDidChangeNotification,
+							object: context)
+						</code></pre>
+						<p>
+							Managed Object Context has three types of notifications
+						</p>
+						<pre><code class="swift" data-noheader>
+							// NSManagedObjectContext ObjectsDidChange Notification
+							// NSManagedObjectContext WillSave Notification
+							// NSManagedObjectContext DidSave Notification
+						</code></pre>
+					</section>
+					<section>
+						<h3>Context Did Change</h3>
+						<pre><code class="swift" data-noheader>
+						func managedObjectContextObjectsDidChange(notification: NSNotification) {
+							// userInfo holds information about the changes
+						guard let userInfo = notification.userInfo else { return }
+						if let inserts =
+							userInfo[NSInsertedObjectsKey] as? Set&lt;NSManagedObject&gt; {  }
+						if let updates =
+							userInfo[NSUpdatedObjectsKey] as? Set&lt;NSManagedObject&gt; {  }
+						if let deletes =
+							userInfo[NSDeletedObjectsKey] as? Set&lt;NSManagedObject&gt; {  }
+						}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Considered Harmful?</h3>
+						<ul>
+							<li>Notifications make it harder to trace the flow of control</li>
+							<li>Deinitialized observers crash the app</li>
+							<li>Notification centers are not well suited for unit tests</li>
+						</ul>
+					</section>
+					<section data-background="../img/notification-flow-chart.png" data-background-size="contain" class="clear">
+						<h3 class="hidden">Other Options</h3>
+					</section>
+				</section>
+				<section>
+					<h3 style="display:none;">Related Resources</h3>
+					<ul>
+						<li><a href="https://developer.apple.com/library/content/documentation/General/Conceptual/ConcurrencyProgrammingGuide/ConcurrencyandApplicationDesign/ConcurrencyandApplicationDesign.html">Concurrency - Apple Developer</a></li>
+						<li><a href="https://developer.apple.com/videos/play/wwdc2016/720/">Concurrent Programming With GCD in Swift 3 - WWDC2016</a></li>
+						<li><a href="https://developer.apple.com/reference/dispatch">Dispatch API Reference - Apple Developer</a></li>
+						<!--KVO-->
+						<li><a href="https://developer.apple.com/library/prerelease/content/documentation/Cocoa/Conceptual/Notifications/Articles/Notifications.html">Notification Programming Topics - Apple Developer</a></li>
+						<li><a href="https://developer.apple.com/reference/foundation/notificationcenter">Notification Center API Reference - Apple Developer</a></li>
+					</ul>
+				</section>
+			</div>
+		</div>
+
+		<script src="../lib/js/head.min.js"></script>
+		<script src="../js/reveal.js"></script>
+		<script src="../js/swift.js"></script>
+
+		<svg height="0" xmlns="http://www.w3.org/2000/svg">
+			<filter id="drop-shadow">
+				<feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+				<feOffset dx="12" dy="12" result="offsetblur"/>
+				<feFlood flood-color="rgba(0,0,0,0.5)"/>
+				<feComposite in2="offsetblur" operator="in"/>
+				<feMerge>
+					<feMergeNode/>
+					<feMergeNode in="SourceGraphic"/>
+				</feMerge>
+			</filter>
+		</svg>
+	</body>
+</html>
