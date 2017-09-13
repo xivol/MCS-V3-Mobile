@@ -41,6 +41,7 @@ for uScalar in utf64Rep.unicodeScalars {
  */
 var abc = "abcdefghijklmnopqrstuvwxyz"
 abc[abc.startIndex]
+type(of: abc.startIndex)
 guard let start = abc.index(abc.startIndex, offsetBy: 10, limitedBy: abc.endIndex),
      let end = abc.index(abc.endIndex, offsetBy: -10, limitedBy: abc.startIndex)
 else {

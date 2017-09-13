@@ -11,7 +11,7 @@ pair
 
 var namedPair: (name: String, age: Int)
 namedPair.name = "Ilya"
-namedPair.age = 28
+namedPair.age = 29
 
 namedPair
 //: Type inferrence

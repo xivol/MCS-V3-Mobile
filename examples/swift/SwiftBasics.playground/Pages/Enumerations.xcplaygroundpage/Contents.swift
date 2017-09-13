@@ -5,7 +5,7 @@
  */
 import Foundation
 //: ### Simple Enumerations
-enum Direction{
+enum Direction {
     case up, down, left, right
 }
 
