@@ -8,6 +8,9 @@ import Foundation
 var hello = "Hello, playground"
 hello += "!"
 for c in hello.characters { c }
+//: _The syntax in Swift 4 will go back to how it originally was in Swift._
+// for c in hello { c }
+
 //: ### String Initialization
 let pi = 3.141592653589793
 

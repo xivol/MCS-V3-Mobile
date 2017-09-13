@@ -1,5 +1,6 @@
 //: ## Basic Syntax
-//: [Table of Contents](TableOfContents) · [Previous](@previous) · [Next](@next)//: ****
+//: [Table of Contents](TableOfContents) · [Previous](@previous) · [Next](@next)
+//: ****
 //: ### Constants and Variables
 let constant = "Constants are declared with 'let'"
 // constant = "You can not change a constant!"
@@ -25,9 +26,11 @@ let i = 0x2a
 "i is inferred as \(type(of: i))"
 
 let π = 3.14
+
 "π is inferred as \(type(of: π))"
 
 let star = "⭐️"
+
 "star is inferred as \(type(of: star))"
 //:### Type Casting
 //: There is no implicit type conversions in Swift.
@@ -43,6 +46,7 @@ let logic = (true && !false) || (!true && false)
 
 let range = 1...3
 let interval = 1..<10
+let openRange = 0...Int.max   // 0... in Swift 4
 //:### Control Flow
 //: In Swift curved braces are required for control flow.
 if comparision {
@@ -62,7 +66,7 @@ if signedValue > 0  {
 }
 
 switch signedValue {
-case Int.min..<0:
+case Int.min..<0:      // ..<0 in Swift 4
     "signedValue < 0"
 case 0:
     "signedValue == 0"
@@ -82,17 +86,17 @@ case 1, 2, 3, 5, 8, 13, 21, 34, 55, 89:
 default:
     break
 }
-//:_there are the basic loops in Swift_
+//: Rang-based Iteration
 for i in 1...10 {
     i % 2
 }
-
+//: Conditional Iteration
 var whileCondition = true
 while whileCondition {
     whileCondition
     whileCondition = false
 }
-
+//: Iteration with post-condition
 var repeatCondition = false
 repeat {
     repeatCondition
