@@ -25,6 +25,7 @@ enum AccessDenied: Error {
 class DataBase {
     var users: Set<String>
     var resources: [String : Set<String>]
+    
     init(users: Set<String>, resources: [String:Set<String>]) {
         self.users = users
         self.resources = resources

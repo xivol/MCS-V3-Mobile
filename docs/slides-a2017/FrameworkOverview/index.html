@@ -112,16 +112,16 @@
 										<small>Concurrency, Networking, File-system</small>
 									</li>
 									<li>
-										Security<br />
-										<small>Encription, Certificates, Keychain</small>
-									</li>
-									<li>
 										Accessory<br />
 										<small>Bluetooth, Attached hardware communication</small>
 									</li>
 									<li>
 										Accelerate<br />
 										<small>Signal processing, Linear algebra</small>
+									</li>
+									<li>
+										Security<br />
+										<small>Encription, Certificates, Keychain</small>
 									</li>
 								</ul>
 							</div>
@@ -150,11 +150,11 @@
 								<ul>
 									<li>
 										Foundation<br />
-										<small>Collections, Threads, Socket communication</small>
+										<small>Collections, Tasks, Socket communication</small>
 									</li>
 									<li>
 										Core Data<br />
-										<small>Internal database storage system</small>
+										<small>Internal database managment system</small>
 									</li>
 									<li>
 										Core Media<br />
@@ -207,7 +207,7 @@
 									</li>
 									<li>
 										AV Foundation<br />
-										<small>Recording and playback of audio and video</small>
+										<small>Record and playback of audio and video</small>
 									</li>
 									<li>
 										Advanced graphics<br />
@@ -243,7 +243,6 @@
 										<ul>
 											<li>Lifecycle mangement</li>
 											<li>UI managment</li>
-											<li>Multitasking</li>
 											<li>Notifications</li>
 										</ul>
 									</li>
@@ -253,7 +252,7 @@
 									</li>
 									<li>
 										Notification Center<br />
-										<small>Showing custom data in notification center</small>
+										<small>Showing custom data in notifications</small>
 									</li>
 								</ul>
 							</div>
@@ -289,9 +288,9 @@
 							</div>
 							<div class="col application arrow" >
 								<ul>
-									<li>App Executable</li>
+									<li>Executable</li>
 									<li>UI files</li>
-									<li>Stored Images</li>
+									<li>Assets</li>
 									<li>Localization Resources</li>
 									<li>Temporary Files</li>
 									<li>Cache</li>
@@ -395,12 +394,12 @@
 						</p>
 					</section>
 					<section>
-						<h3>App's Limits</h3>
+						<h3>App's Limitations</h3>
 						<div class="row">
 							<div class="col">
 								<ul>
 									<li>Sandbox FileSystem</li>
-									<li>250Mb-1Gb RAM</li>
+									<li>250Gb - 2Gb RAM</li>
 									<li>Workflow Guidelines</li>
 									<li>User Permissions</li>
 								</ul>
@@ -667,12 +666,15 @@
 					</section>
 					<section>
 						<h3>UIApplicationDelegate</h3>
-							<ul class="controller">
-								<li>Responds to changes in the execution state</li>
-								<li>Responds to system notifications</li>
-								<li>Allows for state preservation and restoration</li>
-								<li>Stores main window</li>
-							</ul>
+						<p>
+							<small>Controller</small>
+						</p>
+						<ul class="controller">
+							<li>Responds to changes in execution state</li>
+							<li>Responds to system notifications</li>
+							<li>Allows for state preservation and restoration</li>
+							<li>Stores main window</li>
+						</ul>
 					</section>
 					<section>
 						<h3>Execution State Changes</h3>
@@ -758,8 +760,10 @@
 					</section>
 					<section>
 						<h3>UIWindow</h3>
+						<p>
+							<small>View</small>
+						</p>
 						<ul class="view">
-							<li>Root View</li>
 							<li>Sets Screen bounds for the App</li>
 							<li>Stores View Stack</li>
 						</ul>

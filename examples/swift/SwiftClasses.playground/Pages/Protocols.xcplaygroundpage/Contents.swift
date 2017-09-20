@@ -50,14 +50,13 @@ people.append(anna)
 for person in people {
     
     if person is Printable {
-        print("\(person.name) is printable:", separator: "", terminator: " ")
         (person as! Printable).printMe()
     }
     
     if let realPerson = person as? RealPerson {
-        print("\(realPerson.name) \(formatter.string(from: realPerson.birthDate))")
+        "\(realPerson.name) \(formatter.string(from: realPerson.birthDate))"
     } else {
-        print("\(person.name) is not a RealPerson")
+        "\(person.name) is not a RealPerson"
     }
 }
 //: ### Associated Types
