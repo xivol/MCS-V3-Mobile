@@ -43,6 +43,12 @@ extension CalculatorController: CalculatorDelegate {
         print("Computational Error: " + message)
         
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        
+        let cancel = UIAlertAction(title: "Cancel",style: UIAlertActionStyle.cancel) { action in
+                alert.dismiss(animated: true, completion: nil)
+            }
+        alert.addAction(cancel)
+        
         self.present(alert, animated: true)
     }
     
