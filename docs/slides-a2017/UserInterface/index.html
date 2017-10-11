@@ -754,6 +754,20 @@
 		<h1>Custom Views</h1>
 	</section>
 	<section>
+		<h3>UIAppearence</h3>
+		<pre><code src="ViewController.swift">
+			override func viewDidLoad(){
+				super.viewDidLoad()
+				let buttonProxy = UIButton.appearence()
+				buttonProxy.backgroundColor = .red
+			}
+		</code></pre>
+		<p>
+			UIAppearence — allows to set default properties of UIView subclass
+		</p>
+		<p class="notice">Unreliable for code generated views</p>
+	</section>
+	<section>
 		<h3>View Architecture</h3>
 		<p>
 			Every view has underlying Core Animation Layer

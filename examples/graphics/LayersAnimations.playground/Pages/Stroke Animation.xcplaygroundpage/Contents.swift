@@ -13,7 +13,7 @@ let rect = CGRect(x: view.bounds.width / 3,
 circle.path = CGPath(ellipseIn: rect, transform: nil)
 
 circle.strokeColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1).cgColor
-circle.lineWidth = view.bounds.width / 3
+circle.lineWidth = view.bounds.width / 5
 
 view.layer.addSublayer(circle)
 

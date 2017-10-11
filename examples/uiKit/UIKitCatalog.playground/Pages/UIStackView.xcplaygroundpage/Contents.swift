@@ -20,7 +20,7 @@ for i in 1...5 {
     column.spacing = 1
     stackView.addArrangedSubview(column)
 }
-stackView.distribution = .fillEqually
+stackView.distribution = .fillProportionally
 stackView.axis = .horizontal
 stackView.spacing = 1
 

@@ -17,26 +17,26 @@ newtonsCradle.ballPadding = 2.0
 ### Behavior
 Adjust `elasticity` and `resistance` to change how the balls react to eachother.
 */
-newtonsCradle.itemBehavior.elasticity = 1.0
-newtonsCradle.itemBehavior.resistance = 0.2
+newtonsCradle.itemBehavior.elasticity = 0.5
+newtonsCradle.itemBehavior.resistance = 0.1
 /*:
 ### Shape and rotation
 How does Newton's Cradle look if we use squares instead of circles and allow them to rotate?
 */
-newtonsCradle.useSquaresInsteadOfBalls = false
-newtonsCradle.itemBehavior.allowsRotation = false
+newtonsCradle.useSquaresInsteadOfBalls = true
+newtonsCradle.itemBehavior.allowsRotation = true
 /*:
 ### Gravity
 Change the `angle` and/or `magnitude` of gravity to see what Newton's Device might look like in another world.
 */
 newtonsCradle.gravityBehavior.angle = CGFloat(M_PI_2)
-newtonsCradle.gravityBehavior.magnitude = 1.0
+newtonsCradle.gravityBehavior.magnitude = 10.0
 /*:
 ### Attachment
 What happens if you change `length` of the attachment behaviors to different values?
 */
 for attachmentBehavior in newtonsCradle.attachmentBehaviors {
-    attachmentBehavior.length = 100
+    attachmentBehavior.length = 50
 }
 
 PlaygroundPage.current.liveView = newtonsCradle

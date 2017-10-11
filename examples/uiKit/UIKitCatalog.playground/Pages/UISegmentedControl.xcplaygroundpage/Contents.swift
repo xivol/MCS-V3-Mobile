@@ -37,7 +37,7 @@ let formatter = NumberFormatter()
 formatter.numberStyle = .spellOut
 
 for i in 1...number {
-    segmentedControl.insertSegment(withTitle: "\(i)", at: UInt(number), animated: false) // ??? bridging error ???
+    segmentedControl.insertSegment(withTitle: "\(i)", at: number, animated: false)
     let label = UILabel(frame: CGRect(x: 0, y: 0, width: 250, height: 70))
     
     label.isHidden = true

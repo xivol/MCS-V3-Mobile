@@ -13,7 +13,7 @@ public extension String {
         
         let nsString = self as NSString
         let font = UIFont.systemFont(ofSize: size.width)
-        nsString.draw(in: rect, withAttributes: [NSFontAttributeName: font])
+        nsString.draw(in: rect, withAttributes: [NSAttributedStringKey.font: font])
         
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()

@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>Swift-CS333. Graphics &amp; Animation</title>
+		<title>MADe with Swift.  Graphics &amp; Animation</title>
 
 		<link rel="stylesheet" href="../css/reveal.css">
 		<link rel="stylesheet" href="../css/theme/swift.css">
@@ -33,7 +33,7 @@
 			</div>
 			<div class="slides">
 				<section>
-					<h2><a href="https://xivol.github.io/Swift-CS333/">CS333</a></h2>
+					<h3><a href="https://xivol.github.io/MCS-V3-Mobile/">MCSv3</a></h3>
 					<h1>Mobile Development</h1>
 					<p>
 						</br>Ilya Loshkarev</br>
@@ -57,6 +57,9 @@
 							<li>
 								<a href="#/4">Animation</a>
 							</li>
+							<!--<li>
+								<a href="#/5">Dynamics</a>
+							</li>-->
 							<li>
 								<a href="#/5">Processing Images</a>
 							</li>
@@ -347,6 +350,24 @@
 						</p>
 					</section>
 					<section>
+						<h3>View Property Animator</h3>
+						<pre><code class="swift" data-noheader>
+								animator = UIViewPropertyAnimator(duration: 0, curve: .linear)
+								{
+									self.view.center = newLocation
+									self.view.background-color = newColor
+								}
+
+								animator.fractionComplete = 0.5
+						</code></pre>
+						<p>
+							Allows to dynamically modify animations before they finish
+						</p>
+						<p class="notice">
+							Avaliable since iOS 10
+						</p>
+					</section>
+					<section>
 						<h3>UIView Animation Limits</h3>
 						<div class="row">
 							<div class="col">
@@ -455,6 +476,7 @@
 						</code></pre>
 					</section>
 				</section>
+<!--	Dynamics -->
 <!--	Processing Images		-->
 				<section>
 					<section data-background="../img/imaging.png">
@@ -549,7 +571,7 @@
 						</p>
 					</section>
 				</section>
-<!-- Resources			-->
+<!--	Resources			-->
 				<section>
 					<h3 style="display:none;">Related Resources</h3>
 					<ul>

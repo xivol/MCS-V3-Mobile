@@ -100,7 +100,7 @@ layout.itemSize = CGSize(width: 50, height: 50)
 //: Header size
 layout.headerReferenceSize = CGSize(width: 50, height: 25)
 //: Scroll Direction
-layout.scrollDirection = .vertical
+layout.scrollDirection = .horizontal
 //: ### Initialize Collection View
 let collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 250, height: 500), collectionViewLayout: layout)
 collectionView.backgroundView = UIImageView(image: #imageLiteral(resourceName: "gradient.png"))

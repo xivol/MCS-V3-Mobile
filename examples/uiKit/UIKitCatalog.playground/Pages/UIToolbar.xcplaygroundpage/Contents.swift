@@ -85,7 +85,7 @@ imageBar.clipsToBounds = true
 imageBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
 imageBar.tintColor = #colorLiteral(red: 0.9529411793, green: 0.6862745285, blue: 0.1333333403, alpha: 1)
 imageBar.items = [
-    UIBarButtonItem(image: "🚶".image, style: .plain, target: controller, action: #selector(Controller.imageButtonTouched(sender:))),
+    UIBarButtonItem(image: "🚶".image.withRenderingMode(.alwaysOriginal), style: .plain, target: controller, action: #selector(Controller.imageButtonTouched(sender:))),
     space,
     UIBarButtonItem(image: "🚲".image, style: .plain, target: controller, action: #selector(Controller.imageButtonTouched(sender:))),
     space,
