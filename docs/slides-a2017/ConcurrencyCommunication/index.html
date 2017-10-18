@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>Swift-CS333. Concurrency and Communication</title>
+		<title>MADe with Swift. Concurrency and Communication</title>
 
 		<link rel="stylesheet" href="../css/reveal.css">
 		<link rel="stylesheet" href="../css/theme/swift.css">
@@ -33,7 +33,7 @@
 			</div>
 			<div class="slides">
 				<section>
-					<h2><a href="https://xivol.github.io/Swift-CS333/">CS333</a></h2>
+					<h3><a href="https://xivol.github.io/MCS-V3-Mobile/">MCSv3</a></h3>
 					<h1>Mobile Development</h1>
 					<p>
 						</br>Ilya Loshkarev</br>
@@ -294,14 +294,36 @@
 					<section>
 						<h3>Adopting KVC</h3>
 						<pre><code class="swift" data-noheader>
-							class KVCCompliant: NSObject {
-								dynamic var name: String = ""
+							class KVCPerson: NSObject {
+								@objc var name: String = ""
 							}
-							let kvc: KVCCompliant
-							kvc.setValue("I'm a KVC Object", forKey: "name")
+							var kvc = KVCPerson()
+							kvc.setValue("I'm a KVC Object", forKey: #keyPath(KVCPerson.name))
 						</code></pre>
 						<p class="notice">
 							There is no explicit KVC protocol, but any subclass of <code class="hljs-type">NSObject</code> is KVC compliant
+						</p>
+					</section>
+					<section>
+						<h3>KeyPaths in Swift 4</h3>
+						<pre><code class="swift" data-noheader>
+							class Person {
+								var name: String
+								var bestFriend: Person? = nil
+							}
+							var han = Person(name: "Han Solo")
+							var luke = Person(name: "Luke Skywalker")
+							luke.bestFriend = han
+
+							luke[keyPath: \Person.name] = "Master Luke"
+							luke[keyPath: \Person.bestFriend?.name]  // "Han Solo"
+						</code></pre>
+						<p>
+							Dedicated <code class="hljs-type">KeyPath</code> type allows to reference properties
+						</p>
+						<p>
+							Works with any Swift type<br/>
+							Would support subscripts in the future
 						</p>
 					</section>
 					<section>
@@ -360,19 +382,19 @@
 							<li>Comes through one method</li>
 							<li>Requires you to handle superclasses yourself</li>
 							<li>Obscures control flow</li>
-							<li class="notice">Can crash when deregistering</li>
+							<li class="notice">Can crash while deregistering</li>
 						</ul>
 					</section>
 					<section>
 						<h3>Property Observers</h3>
 						<pre><code class="swift" data-noheader>
-							class Note {
-								var content: String {
+							class Person {
+								var name: String {
 									willSet {
-										print("content will be set to \(content)")
+										print("name will be set to \(newValue)")
 									}
 									didSet {
-										print("content has been set to \(content)")
+										print("name has been changed from \(oldValue)")
 									}
 								}
 							}
@@ -399,30 +421,39 @@
 						</code></pre>
 					</section>
 					<section>
-					<h3>Notification</h3>
-					<pre><code class="swift" data-noheader>
-					  name: String // unique name
-					  object: AnyObject? // sender
-					  userInfo: [:]? // additional data
-					</code></pre>
-					<p>
-					An object distributed through Notification Center
-					</p>
+						<h3>Notification</h3>
+						<pre><code class="swift" data-noheader>
+						  name: String // unique name
+						  object: AnyObject? // sender
+						  userInfo: [:]? // additional data
+						</code></pre>
+						<p>
+							An object distributed through Notification Centers
+						</p>
 					</section>
 					<section>
-					<h3>Post</h3>
+						<h3>Custom Notifications</h3>
+						<pre><code class="swift" data-noheader>
+							extension Notification.Name {
+								static let myNotification = Notification.Name("MyNotification")
+								static let myNotificationWithPayload = Notification.Name("MyNotificationWithPayload")
+							}
+						</code></pre>
+						<p class="notice">
+							Any notification should have an unique name within the app
+						</p>
+						<p>
+							All default notification names are stored in <br/><code class="hljs-type">Notification.Name</code> class
+						</p>
+					</section>
+					<section>
+					<h3>Send Notification</h3>
 					<pre><code class="swift" data-noheader>
-						defaultCenter.post(name: "MyNotification", object: self)
-						defaultCenter.post(name: "MyNotificationWithPayload",
+						defaultCenter.post(name: .myNotification, object: self)
+						defaultCenter.post(name: .myNotificationWithPayload,
 							object: self,
 							userInfo: ["payload" : myPayload])
 					</code></pre>
-					<p class="notice">
-						Any notification should have a unique name within an app
-					</p>
-					<p>
-						It is a good idea to store notification names in an enumeration
-					</p>
 					</section>
 					<section>
 						<h3>Observe</h3>
@@ -473,7 +504,7 @@
 							in which the notification was posted
 						</p>
 					</section>
-					<section>
+					<!--<section>
 						<h3>Core Data Notifications</h3>
 						<pre><code class="swift" data-noheader>
 						defaultCenter.addObserver(self,
@@ -504,7 +535,7 @@
 							userInfo[NSDeletedObjectsKey] as? Set&lt;NSManagedObject&gt; {  }
 						}
 						</code></pre>
-					</section>
+					</section>-->
 					<section>
 						<h3>Considered Harmful?</h3>
 						<ul>
