@@ -11,7 +11,7 @@ if (!Array.prototype.last){
 
 Reveal.initialize({
   // More info https://github.com/hakimel/reveal.js#configuration
-  history: false,
+  history: true,
   slideNumber: 'c/t',
   transition: 'slide',
   // More info https://github.com/hakimel/reveal.js#dependencies

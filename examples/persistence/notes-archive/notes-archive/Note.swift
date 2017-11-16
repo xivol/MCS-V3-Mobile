@@ -57,6 +57,9 @@ class Note: NSObject, NSCoding {
     }()
     
     override var description: String {
-        return "(\(Note.dateFormatter.string(from: date))) " + content
+        return "(\(Note.dateFormatter.string(from: date))) \n" + content
     }
 }
+//@available(*, unavailable, renamed: "Note4Codable")
+//typealias Note = Note4Codable
+

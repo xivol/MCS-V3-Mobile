@@ -48,7 +48,7 @@ class MasterViewController: UITableViewController {
         super.viewWillAppear(animated)
     }
 
-    func insertNewObject(_ sender: Any) {
+    @objc func insertNewObject(_ sender: Any) {
         
         let input = UIAlertController(title: "New Note", message: "", preferredStyle: .alert)
         input.addTextField {
@@ -125,7 +125,6 @@ class MasterViewController: UITableViewController {
             print("insert")
         }
     }
-
 
 }
 

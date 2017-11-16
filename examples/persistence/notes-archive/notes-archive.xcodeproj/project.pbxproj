@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E0B39D901FA9F99500FCA6DB /* Note4Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B39D8F1FA9F99500FCA6DB /* Note4Codable.swift */; };
 		E0E4A3081E7D315600112416 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0E4A3071E7D315600112416 /* AppDelegate.swift */; };
 		E0E4A30A1E7D315600112416 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0E4A3091E7D315600112416 /* MasterViewController.swift */; };
 		E0E4A30C1E7D315600112416 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0E4A30B1E7D315600112416 /* DetailViewController.swift */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E0B39D8F1FA9F99500FCA6DB /* Note4Codable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note4Codable.swift; sourceTree = "<group>"; };
 		E0E4A3041E7D315600112416 /* notes-archive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "notes-archive.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0E4A3071E7D315600112416 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E0E4A3091E7D315600112416 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 				E0E4A3121E7D315600112416 /* LaunchScreen.storyboard */,
 				E0E4A3151E7D315600112416 /* Info.plist */,
 				E0E4A31B1E7D320100112416 /* Note.swift */,
+				E0B39D8F1FA9F99500FCA6DB /* Note4Codable.swift */,
 			);
 			path = "notes-archive";
 			sourceTree = "<group>";
@@ -106,6 +109,7 @@
 					E0E4A3031E7D315600112416 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = 84LQ3B37P5;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -151,6 +155,7 @@
 				E0E4A30A1E7D315600112416 /* MasterViewController.swift in Sources */,
 				E0E4A3081E7D315600112416 /* AppDelegate.swift in Sources */,
 				E0E4A31C1E7D320100112416 /* Note.swift in Sources */,
+				E0B39D901FA9F99500FCA6DB /* Note4Codable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,7 +281,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "ru.sfedu.loshkarev.notes-archive";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -289,7 +295,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "ru.sfedu.loshkarev.notes-archive";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -312,6 +319,7 @@
 				E0E4A31A1E7D315600112416 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

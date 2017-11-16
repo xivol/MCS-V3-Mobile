@@ -1,0 +1,563 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>MADe with Swift. Firebase</title>
+
+		<link rel="stylesheet" href="../css/reveal.css">
+		<link rel="stylesheet" href="../css/theme/swift.css">
+		<!-- Theme used for syntax highlighting of code included in main theme -->
+		<!-- Printing and PDF exports -->
+		<script type="text/javascript">
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+ 		</script>
+		<style>
+			#swift-bird{
+				-webkit-clip-path: polygon(0% 0%, 90% 10%, 100% 100%, 10% 90%);
+				clip-path: polygon(0% 0%, 90% 10%, 100% 100%, 10% 90%);
+				max-width: 100%;
+				transform: scaleX(-1);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="topbar">
+				<div class="breadcrumbs">
+				</div>
+			</div>
+			<div class="slides">
+				<section>
+					<h3><a href="https://xivol.github.io/MCS-V3-Mobile/">MCSv3</a></h3>
+					<h1>Mobile Development</h1>
+					<p>
+						</br>Ilya Loshkarev</br>
+						<a href="mailto:loshkarev.i@gmail.com">loshkarev.i@gmail.com</a>
+					</p>
+					<p class="footer">
+						<br>SFEDU 2017
+					</p>
+				</section>
+				<section>
+					<h3 class="hidden">Overview</h3>
+					<div class="row">
+						<div class="col">
+						<ul>
+							<li>
+								<a href="#/2">Backend as a Service</a>
+							</li>
+							<li>
+								<a href="#/3">Database</a>
+							</li>
+							<li>
+								<a href="#/4">Authentication</a>
+							</li>
+							<li>
+								<a href="#/5">Storage</a>
+							</li>
+						</ul>
+						</div>
+						<div class="col">
+							<img id="swift-bird" src="../img/firebase-bird.jpg" />
+						</div>
+					</div>
+				</section>
+<!-- BAAS     -->
+				<section>
+					<section data-background="../img/title/baas.jpg">
+							<h1>Backend As&nbsp;A&nbsp;Service</h1>
+					</section>
+					<section>
+						<h3>The Concept of BaaS</h3>
+						<p>
+							An API provider that covers most of the mobile application server tasks
+						</p>
+						<div class="row">
+							<div class="col">
+								<p><em>Pros:</em></p>
+								<ul>
+									<li>Easy to start</li>
+									<li>Easy to maintain</li>
+								</ul>
+							</div>
+							<div class="col">
+								<p><em>Cons:</em></p>
+								<ul>
+									<li>Limited features</li>
+									<li>Pricing</li>
+								</ul>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h3>Options</h3>
+						<table>
+							<thead>
+								<tr>
+									<th></th>
+									<th>CloudKit</th>
+									<th>Firebase</th>
+									<th>AWS</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th>Supplier</th>
+									<td>Apple</td>
+									<td>Google</td>
+									<td>Amazon</td>
+								</tr>
+								<tr>
+									<th>Platforms</th>
+									<td>iOS, JS, Web</td>
+									<td>iOS, Android, JS, Web, C++, Unity</td>
+									<td>iOS, Android, JS, Web, C++, Unity</td>
+								</tr>
+								<tr>
+									<th>Complexity</th>
+									<td>Low</td>
+									<td>Average</td>
+									<td>High</td>
+								</tr>
+								<tr>
+									<th>Open Source</th>
+									<td>-</td>
+									<td>+/-</td>
+									<td>-</td>
+								</tr>
+							</tbody>
+						</table>
+						<p class="notice">
+							Prices are usually scaled on data per user basis.
+						</p>
+					</section>
+					<section>
+						<h3>CloudKit Services</h3>
+						<div class="row">
+							<div class="col">
+								<img src="../img/cloudKit.png" alt="CloudKit Logo"/>
+							</div>
+							<ul class="col">
+								<li>Remote Database</li>
+								<li>Authentication with Apple ID</li>
+								<li>Shared Storage</li>
+								<li>Notifications</li>
+							</ul>
+						</div>
+						<p class="notice">Requires Apple Developer account to use</p>
+					</section>
+					<section>
+						<h3>Firebase Services</h3>
+						<div class="row">
+							<div class="col">
+								<img src="../img/firebase.png" alt="Firebase Logo"/>
+							</div>
+							<ul class="col">
+								<li>Realtime Database</li>
+								<li>Authentication</li>
+								<li>Cloud Storage</li>
+								<li>Cloud Functions</li>
+								<li>Notifications</li>
+								<li>Web-Hosting</li>
+							</ul>
+							<ul class="col">
+								<li>And More...</li>
+							</ul>
+						</div>
+					</section>
+					<section>
+						<h3>Firebase Setup</h3>
+						<ol>
+							<li>Create new iOS project in Firebase console</li>
+							<li>Configure required parameters</li>
+							<li>Get <code>GoogleService-Info.plist</code> from online project configurator</li>
+							<li>Add <code>GoogleService-Info.plist</code> to your XCode project</li>
+							<li>Install Firebase SDK for iOS</li>
+						</ol>
+					</section>
+					<section>
+						<h3>Install Firebase</h3>
+						<p>Podfile</p>
+						<pre><code class="nohighlight" src="Project/Podfile">
+							use_frameworks!
+							source 'https://github.com/CocoaPods/Specs.git'
+							target 'firebase-test' do
+								pod 'Firebase/Core'
+								pod 'Firebase/Auth'
+								pod 'Firebase/Database'
+								# ...
+							end
+						</code></pre>
+						<pre><code class="swift" src="firebase-test/AppDelegate.swift">
+							func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+								FirebaseApp.configure()
+							}
+						</code></pre>
+					</section>
+				</section>
+<!-- Authentication    -->
+				<section>
+					<section data-background="../img/title/fire-auth.gif">
+						<h1>Authentication</h1>
+					</section>
+					<section>
+						<h3>Firebase Authentication</h3>
+					</section>
+					<section>
+						<h3>Identity Providers</h3>
+						<p>Firebase supports several providers of user credentials:</p>
+						<div class="row" >
+							<div class="col">
+								<p>Also a backend service,<br> easy-to-use SDKs,<br>and ready-made UI</p>
+							</div>
+							<ul style="font-size:0.8em; text-align:center;" class="col">
+								<li>Google</li>
+								<li>Twitter</li>
+								<li>Facebook</li>
+								<li>Git</li>
+							</ul>
+							<ul class="col" style="font-size:0.8em; text-align:center;">
+								<li>Email</li>
+								<li>Phone</li>
+								<li>Anonimous</li>
+								<li>Customized</li>
+							</ul>
+						</div>
+					</section>
+					<section>
+						<h3>Users in Firebase</h3>
+						<div class="row">
+							<div class="col">
+								<p>A Firebase User has a fixed set of basic properties</p>
+							</div>
+							<ul class="col">
+								<li>Unique ID</li>
+								<li>Display Name</li>
+								<li>Email</li>
+								<li>photoUrl</li>
+							</ul>
+						</div>
+						<p class="notice">User info is stored in a database separate from project data</p>
+					</section>
+					<section>
+						<h3>User lifecycle</h3>
+						<p>There several events your app can react to</p>
+						<ol>
+							<li>User is signed in at startup</li>
+							<li>User signs in</li>
+							<li>User signs out</li>
+							<li>User's access token is refreshed <br />
+							<small>When user is promted to reauthenticate or by expiration</small></li>
+						</ol>
+					</section>
+					<section>
+						<h3>Authentication Setup</h3>
+						<ol>
+							<li>Enable required auth method in Firebase console</li>
+							<li>Update your <code>GoogleService-Info.plist</code></li>
+							<li>Add SDK for a provider</li>
+							<li>Add required options to the project configuration</li>
+						</ol>
+					</section>
+					<section>
+						<h3>Firebase UI</h3>
+						<div class="row">
+							<div >
+								<img class="medium" src="../img/firebase-ui.png" alt="Firebase UI">
+							</div>
+							<ul class="col">
+								<li>Multiple providers</li>
+								<li>Account management</li>
+								<li>Account linking</li>
+								<li>Customizable</li>
+							</ul>
+						</div>
+					</section>
+					<section>
+						<h3>Firebase UI Setup</h3>
+						<pre><code class= "swift" data-noheader>
+							FirebaseApp.configure()
+							let authUI = FUIAuth.defaultAuthUI()!
+							authUI.providers = [
+								FUIGoogleAuth(), FUIFacebookAuth()
+							]
+							authUI.delegate = self
+							self.present(authUI.authViewController(), animated: true)
+						</code></pre>
+						<pre><code class= "swift" src="firebase-test/AppDelegate.swift">
+							func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
+								let sourceApplication = options[UIApplicationOpenURLOptionsKey.sourceApplication] as! String?
+								if FUIAuth.defaultAuthUI()?.handleOpen(url, sourceApplication: sourceApplication) ?? false {
+									return true
+								}
+								// other URL handling goes here.
+								return false
+							}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Firebase UI Auth Delegate</h3>
+						<p>Handles user's signIn event and introduces callbacks for UI customization</p>
+						<pre><code class= "swift" data-noheader>
+							func authUI(_ authUI: FUIAuth, didSignInWith user: User?, error: Error?) {
+  							guard let user = user, error == nil else { return }
+								self.title = user.displayName
+							}
+							func authPickerViewController(forAuthUI authUI: FUIAuth) -> FUIAuthPickerViewController {
+								// return custom picker subclass
+							}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Manual Authentication</h3>
+						<p>Auth object allows to implement custom flow for user authorisation</p>
+						<pre><code class= "swift" data-noheader>
+							Auth.auth().addStateDidChangeListener { (auth, user) in
+								if let u = user {
+									print("Signed In as ", u.displayName)
+									try! Auth.auth().signOut()
+								} else {
+									print("Signed Out")
+								}
+							}
+							Auth.auth().signIn(withEmail: emailStr, password: passwordStr)
+						</code></pre>
+					</section>
+				</section>
+<!-- Storage   -->
+        <section>
+          <section data-background="../img/title/fire-storage.jpg">
+            <h1>Storage</h1>
+          </section>
+					<section>
+						<h3>Cloud Storage for Firebase</h3>
+						<p>Provides a declarative rules language that allows you to define how your data should be structured, how it should be indexed, and when your data can be read from and written to</p>
+						<pre><code class= "swift" data-noheader>
+							let storage = Storage.storage()
+						</code></pre>
+					</section>
+					<section>
+						<h3>Storage Reference</h3>
+						<p>A reference can be thought of as a pointer to a file or catalog in the cloud</p>
+						<pre><code class= "swift" data-noheader>
+							let storageRef = storage.reference()
+							var spaceRef = storageRef.child("images/space.jpg")
+							let path = spaceRef.fullPath;
+							let name = spaceRef.name;
+							let images = spaceRef.parent()
+						</code></pre>
+						<p>Files are stored in heirarchal manner</p>
+					</section>
+					<section>
+						<h3>Upload Files</h3>
+						<p>You can upload data from memory or files directly from your device</p>
+						<pre><code class= "swift" data-noheader>
+							let localFile = URL(string: "path/to/image")!
+							let mountainsRef = storageRef.child("mountains.jpg")
+							let uploadTask = mountainsRef.putFile(from: localFile, metadata: nil) {
+								metadata, error in
+								if let error = error {
+									// Uh-oh, an error occurred!
+								} else {
+									// Metadata contains file metadata such as size, content-type, and download URL.
+									let downloadURL = metadata!.downloadURL()
+								}
+							}
+						</code></pre>
+						<p class="notice">You cannot upload data with a reference to the root</p>
+					</section>
+					<section>
+						<h3>Download Files</h3>
+						<pre><code class= "swift" data-noheader>
+							let starsRef = storage.reference(withPath: "images/stars.jpg")
+							let downloadTask = starsRef.write(toFile: localURL) {
+								url, error in
+								if let error = error {
+									// Uh-oh, an error occurred!
+								} else {
+									// Local file URL for "images/island.jpg" is returned
+								}
+							}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Managing Tasks</h3>
+						<p>Upload and Download Tasks can be managed in a similar manner</p>
+						<pre><code class= "swift" data-noheader>
+							let uploadTask = mountainsRef.putFile(from: localFile
+							uploadTask.pause()
+							uploadTask.resume()
+							uploadTask.cancel()
+							let observer = uploadTask.observe(.progress) {
+								snapshot in
+								// A progress event occured
+							}
+						</code></pre>
+						<p>All observers are removed automaticaly once the task is finished</p>
+					</section>
+					<section>
+						<h3>Delete Files</h3>
+						<pre><code class= "swift" data-noheader>
+							let desertRef = storageRef.child("desert.jpg")
+							desertRef.delete { error in
+								if let error = error {
+									// Uh-oh, an error occurred!
+								} else {
+									// File deleted successfully
+								}
+							}
+						</code></pre>
+					</section>
+					<section>
+						<h3>SDWebImage and FirebaseUI</h3>
+						<small><a href="https://github.com/rs/SDWebImage">https://github.com/rs/SDWebImage</a></small>
+						<p>SDWebImage provides an async image downloader with cache support</p>
+						<pre><code class= "swift" data-noheader>
+							let reference = storageRef.child("images/stars.jpg")
+							let imageView: UIImageView = self.imageView
+							let placeholderImage = UIImage(named: "placeholder.jpg")
+							imageView.sd_setImage(with: reference, placeholderImage: placeholderImage)
+						</code></pre>
+						<p>Downloads image directly into imageView</p>
+					</section>
+				</section>
+<!-- Database         -->
+				<section>
+					<section data-background="../img/title/fire-data.jpg">
+						<h1>Database</h1>
+					</section>
+					<section>
+						<h3>Firebase Realtime Database</h3>
+						<p>Data is stored as JSON and synchronized in realtime to every connected client</p>
+						<pre><code class= "swift" data-noheader>
+							"chats": {
+								"one": {
+									"title": "Historical Tech Pioneers",
+									"lastMessage": "ghopper: Relay malfunction found. Cause: moth.",
+									"timestamp": 1459361875666
+								},
+								"two": { ... },
+								"three": { ... }
+							}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Database Reference</h3>
+						<p>Represents a particular location in your Firebase Database <br>and can be used for reading or writing data to that Firebase Database location</p>
+						<pre><code class= "swift" data-noheader>
+							Database.database().reference()
+						</code></pre>
+					</section>
+					<section>
+						<h3>Write Data</h3>
+						<pre><code class= "swift" data-noheader>
+							notesRef.child("01").setValue(["title": title])
+						</code></pre>
+					</section>
+					<section>
+						<h3>Read Data</h3>
+						<p>Snaphots</p>
+						<pre><code class= "swift" data-noheader>
+							notesRef.observeSingleEvent(of: .value, with: {
+								(snapshot) in
+								let value = snapshot.value as? [String:Any] ?? [:]
+								/* ... */
+							} ) {
+								(error) in
+								print(error.localizedDescription)
+							}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Update and Delete Data</h3>
+						<pre><code class= "swift" data-noheader>
+							deletedRef.removeValue()
+							let updates = ["notes/01" : updNote.toDict(),
+										"total-notes" : notes.count ]
+							updatedRef.updateCildValues(updates)
+						</code></pre>
+					</section>
+					<section>
+						<h3>Listen to Data Changes</h3>
+						<p></p>
+						<pre><code class= "swift" data-noheader>
+							notesObserver = notesRef.observe(.value, with: {
+								(snapshot) in
+								Note.storage.removeAll()
+								for child in snapshot.children {
+									let note = Note(withDict: child.value as? [String:Any] ?? [:])
+									Note.storage.append(note)
+							})
+						</code></pre>
+						<p class="notice">Always listen to the changes on the lowes level possible</p>
+					</section>
+					<section>
+						<h3>Listen to Child Events</h3>
+						<pre><code class= "swift" data-noheader>
+							notesRef.observe(.childAdded, with: { (snapshot) -> Void in
+							  self.notes.append(snapshot)
+							})
+							notesRef.observe(.childRemoved, with: { (snapshot) -> Void in
+							  let index = self.indexOfNote(snapshot)
+							  self.notes.remove(at: index)
+							})
+						</code></pre>
+					</section>
+					<section>
+						<h3>Responsible observation</h3>
+						<p>Listeners have to be removed explicitly to stop data from syncing</p>
+						<pre><code class= "swift" data-noheader>
+							notesRef.removeAllObservers()
+							notesRef.child("special").removeObserver(withHandle: specialObserver)
+						</code></pre>
+					</section>
+					<section>
+						<h3>Persistance</h3>
+						<p>Firebase can store syncronized data locally</p>
+						<pre><code class= "swift" data-noheader>
+							Database.database().isPersistenceEnabled = true
+						</code></pre>
+						<p>Firebase synchronizes and stores a local copy of the data for active listeners but can also be forced to sync</p>
+						<pre><code class= "swift" data-noheader>
+							Database.database().reference(withPath: "scores").keepSynced(true)
+						</code></pre>
+					</section>
+				</section>
+				<section>
+					<h3 style="display:none;">Related Resources</h3>
+					<ul>
+<!--						<li><a href="https://developer.apple.com/library/prerelease/content/documentation/Cocoa/Conceptual/URLLoadingSystem/URLLoadingSystem.html">URL Programming Guide - Apple Developer</a></li>
+						<li><a href="https://developer.apple.com/reference/foundation/urlsession">URLSession - API Reference</a></li>
+						<li><a href="https://github.com/Alamofire/Alamofire">Alamofire - GitHub</a></li>
+						<li><a href="https://developer.apple.com/swift/blog/?id=37">Working with JSON in Swift - Swift Blog</a></li>-->
+					</ul>
+				</section>
+
+
+      </div>
+    </div>
+
+    <script src="../lib/js/head.min.js"></script>
+    <script src="../js/reveal.js"></script>
+    <script src="../js/swift.js"></script>
+
+    <svg height="0" xmlns="http://www.w3.org/2000/svg">
+        <filter id="drop-shadow">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+            <feOffset dx="12" dy="12" result="offsetblur"/>
+            <feFlood flood-color="rgba(0,0,0,0.5)"/>
+            <feComposite in2="offsetblur" operator="in"/>
+            <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </svg>
+  </body>
+</html>
