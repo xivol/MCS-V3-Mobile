@@ -53,13 +53,13 @@
 								<a href="#/2">Backend as a Service</a>
 							</li>
 							<li>
-								<a href="#/3">Database</a>
+								<a href="#/3">Authentication</a>
 							</li>
 							<li>
-								<a href="#/4">Authentication</a>
+								<a href="#/4">Storage</a>
 							</li>
 							<li>
-								<a href="#/5">Storage</a>
+								<a href="#/5">Database</a>
 							</li>
 						</ul>
 						</div>
@@ -462,7 +462,7 @@
 					</section>
 					<section>
 						<h3>Read Data</h3>
-						<p>Snaphots</p>
+						<p>Snapshots</p>
 						<pre><code class= "swift" data-noheader>
 							notesRef.observeSingleEvent(of: .value, with: {
 								(snapshot) in
@@ -493,6 +493,7 @@
 								for child in snapshot.children {
 									let note = Note(withDict: child.value as? [String:Any] ?? [:])
 									Note.storage.append(note)
+								}
 							})
 						</code></pre>
 						<p class="notice">Always listen to the changes on the lowes level possible</p>
@@ -511,7 +512,7 @@
 					</section>
 					<section>
 						<h3>Responsible observation</h3>
-						<p>Listeners have to be removed explicitly to stop data from syncing</p>
+						<p>Listeners have to be removed explicitly to stop data syncronization</p>
 						<pre><code class= "swift" data-noheader>
 							notesRef.removeAllObservers()
 							notesRef.child("special").removeObserver(withHandle: specialObserver)

@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseAuth
 
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -18,12 +19,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)        
         
-        if let _ = FireWrapper.auth.currentUser {
-            window?.rootViewController = storyboard?.instantiateInitialViewController()
-        } else {
-            FireWrapper.auth.delegate = self
-            window?.rootViewController = FireWrapper.auth.signInController
-        }
+        FireWrapper.auth.delegate = self
+        window?.rootViewController = FireWrapper.auth.signInController
         window?.makeKeyAndVisible()
         
         return true
@@ -52,10 +49,8 @@ extension AppDelegate: FireAuthWrapperDelegate {
     }
     
     func failed(withError error: Error, onAction action: FireAuthWrapper.Action) {
-        guard let nerror = error as? NSError else {
-            print("Unknown error", error)
-            return
-        }
+        let nerror = error as NSError
+        print("Error", nerror.localizedDescription)
         
         let alert = UIAlertController(title: "Error", message: nerror.localizedDescription, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))

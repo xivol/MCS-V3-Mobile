@@ -7,21 +7,71 @@
 //
 
 import UIKit
+import FirebaseDatabase
+@objc class NotesViewController: UITableViewController, FirebaseDataDelegate {
 
-class NotesViewController: UITableViewController {
-
+    var storage: [Note]?
+    var fireSourceRef: DatabaseReference!
+    var fireObservers = NSMutableDictionary()
+    
     override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        fireSourceRef = FireWrapper.data.userData.child(Note.path)
+        navigationItem.rightBarButtonItem = self.editButtonItem
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
+        storage = [Note]()
+        refreshControl?.beginRefreshing()
+        fireSourceRef.load(with: self.loadData(withSnapshot:))
+        fireSourceRef.connect(delegate: self)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        fireSourceRef.disconnect(delegate: self)
+    }
+    
+    @IBAction func userDidRefresh(_ sender: UIRefreshControl) {
+        print("refreshing")
+        fireSourceRef.load(with: self.loadData(withSnapshot:))
+    }
+    
+    func loadData(withSnapshot snapshot: DataSnapshot) {
+        print("loaded")
+
+        var r = [Note]()
+        
+        for child in snapshot.children {
+            if let note = Note.decode(fromSnapshot: child as! DataSnapshot) {
+                r.append(note)
+            }
+        }
+        storage = r
         tableView.reloadData()
+        refreshControl?.endRefreshing()
+    }
+    
+    // MARK: - Firebase data delegate
+    
+    func fireChildRemoved(withSnapshot snapshot: DataSnapshot) {
+        print("removed")
+        var removedIds = [IndexPath]()
+        
+        if let index = storage?.index(where: { $0.fireId == snapshot.key}) {
+            removedIds.append(IndexPath(row: index, section: 0))
+            storage?.remove(at: index)
+        }
+        tableView.deleteRows(at: removedIds, with: .automatic)
+    }
+    
+    func fireChildAdded(withSnapshot snapshot: DataSnapshot) {
+        guard storage?.index(where: {$0.fireId == snapshot.key}) == nil
+            else { return }
+        print("added")
+        
+        if let note = Note.decode(fromSnapshot: snapshot) {
+            storage?.append(note)
+            tableView.insertRows(at: [IndexPath(row: storage!.count-1, section:0)], with: .automatic)
+        }
     }
     
     // MARK: - Table view data source
@@ -31,50 +81,38 @@ class NotesViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Note.storage.count
+        print(storage?.count ?? 0)
+        return storage?.count ?? 0
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
 
-        let note = Note.storage[indexPath.row]
+        let note = storage?[indexPath.row]
         
-        cell.detailTextLabel?.text = note.date.description
-        cell.textLabel?.text = note.title
+        note?.setup(view: cell)
 
         return cell
     }
     
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+            if let id = storage?[indexPath.row].fireId {
+                fireSourceRef.child(id).removeValue()
+            }
+        }
     }
-    */
+    
     
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.destination {
         case is ShowViewController:
             let dst = segue.destination as! ShowViewController
             if let index = tableView.indexPathForSelectedRow?.row {
-                dst.note = Note.storage[index]
+                dst.note = storage?[index]
             }
         default:
             break

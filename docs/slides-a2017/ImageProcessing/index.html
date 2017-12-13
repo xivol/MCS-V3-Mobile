@@ -1,0 +1,423 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>MADe withSwift. Photo Processing</title>
+
+		<link rel="stylesheet" href="../css/reveal.css">
+		<link rel="stylesheet" href="../css/theme/swift.css">
+		<!-- Theme used for syntax highlighting of code included in main theme -->
+		<!-- Printing and PDF exports -->
+		<script type="text/javascript">
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+ 		</script>
+		<style>
+		#swift-bird{
+      -webkit-clip-path: polygon(5% 20%, 90% -10%, 90% 80%, 5% 110%);
+			clip-path: polygon(5% 20%, 90% -10%, 90% 80%, 5% 110%);
+			/*max-height: 100%*/
+		}
+		</style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="topbar">
+				<div class="breadcrumbs">
+				</div>
+			</div>
+			<div class="slides">
+				<section>
+					<h2><a href="https://xivol.github.io/MCS-V3-Mobile/">MCSv3</a></h2>
+					<h1>Mobile Development</h1>
+					<p>
+						</br>Ilya Loshkarev</br>
+						<a href="mailto:loshkarev.i@gmail.com">loshkarev.i@gmail.com</a>
+					</p>
+					<p class="footer">
+						<br>SFEDU 2017
+					</p>
+				</section>
+				<section>
+					<h3 class="hidden">Overview</h3>
+					<div class="row">
+						<div class="col">
+						<ul>
+							<li>
+								<a href="#/2">Photo Library</a>
+							</li>
+							<li>
+								<a href="#/3">Kingfisher</a>
+							</li>
+							<li>
+								<a href="#/4">Core Image</a>
+							</li>
+							<li>
+								<a href="#/5">Custom Filters</a>
+							</li>
+						</ul>
+						</div>
+						<div class="col">
+							<img id="swift-bird" src="../img/flurry.jpg" />
+						</div>
+					</div>
+				</section>
+<!--	Photo Library	-->
+				<section>
+					<section data-background="../img/title/default.jpg">
+						<h1>Photos</h1>
+					</section>
+					<section>
+						<h3>Photo Library</h3>
+					</section>
+					<section>
+						<h3>Photo Asset</h3>
+						<pre><code class="swift" data-noheader>
+							// all available assets
+							let fetchResult = PHAsset.fetchAssets(with: nil)
+							let asset = fetchResult.object(at: indexPath.item)</code></pre>
+						<p>
+							Assets only contain metadata and are immutable
+						</p>
+					</section>
+					<section>
+						<h3>Asset Collection</h3>
+						<pre><code class="swift" data-noheader>
+							let collections = PHAssetCollection.fetchAssetCollections(
+								with: .smartAlbum, // collection type
+								subtype: .albumRegular, // album type
+								options: nil)
+							// all available assets in collection
+							let fetchResult = PHAsset.fetchAssets(
+								in: collections.object(at: indexPath.raw),
+								options: nil)</code></pre>
+						<p>Assets grouping: moments, smart albums, user-created albums</p>
+					</section>
+					<section>
+						<h3>Image Manager</h3>
+						<pre><code class="swift" data-noheader>
+							PHImageManager().requestImage(for: asset,
+								targetSize: thumbnailSize, contentMode: .aspectFill,
+								options: nil) {
+									image, info in
+									if image != nil {
+										cell.imageView.image = image
+									}
+								}</code></pre>
+						<p>Image Manager allows to download asset's  from local and cloud storages</p>
+					</section>
+					<section>
+						<h3>Collection Change Request</h3>
+						<pre><code class="swift" data-noheader>
+							PHPhotoLibrary.shared().performChanges({
+									 PHAssetCollectionChangeRequest
+									 .creationRequestForAssetCollection(withTitle: title)
+							 }, completionHandler: { success, error in
+									 if !success { print("error creating album: \(String(describing: error))") }
+							 })</code></pre>
+						<p>Change request allows to change metadata, create or delete elements of photo library</p>
+					</section>
+					<section>
+						<h3>Asset Change Request</h3>
+						<pre><code class="swift" data-noheader>
+							let request = PHAssetChangeRequest.creationRequestForAsset(from: image)
+							let changeRequest = PHAssetCollectionChangeRequest(for: assetCollection)
+							PHPhotoLibrary.shared().performChanges({
+								changeRequest?.addAssets([request.placeholderForCreatedAsset!] as NSArray)
+							}, completionHandler: { success, error in
+								if !success { print("error creating asset: \(String(describing: error))") }
+							})</code></pre>
+						<p>
+							Placeholders allow to access metadata for objects that are not yet in the Library
+						</p>
+					</section>
+				</section>
+<!--	Kingfisher	-->
+				<section>
+					<section data-background="../img/title/kingfisher.jpg">
+						<h1>Kingfisher</h1>
+					</section>
+					<section>
+						<h3>Overview</h3>
+						<img src="../img/kingfisher_logo.png" alt="Kingfisher Logo">
+						<small><a href="https://github.com/onevcat/Kingfisher">https://github.com/onevcat/Kingfisher</a></small>
+						<ul>
+							<li>Asynchronous image downloading and caching</li>
+							<li>Multiple-layer cache for both memory and disk</li>
+							<li>Basic image processors and filters supplied</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Retriveing Images</h3>
+						<pre><code class="swift" data-noheader>
+							imageView.kf.setImage(with: url)
+							imageView.kf.setImage(with: url, placeholder: image)
+							imageView.kf.setImage(with: url, progressBlock:
+							{   receivedSize, totalSize in
+								print("downloading progress: \(receivedSize)")
+							})
+							imageView.kf.setImage(with: url, completionHandler:
+							{   (image, error, cacheType, imageUrl) in
+								print("Downloaded Image: \(image)")
+							})
+						</code></pre>
+						<p>Supports image, UI and GIF placeholders</p>
+						<p class="notice">All downloaded images are cached by default</p>
+					</section>
+					<section>
+						<h3>Image Cache</h3>
+						<pre><code class="swift" data-noheader>
+							ImageCache.default.store(image, forKey: "key_for_image")
+							ImageCache.default.store(processedImage, original: imageData,
+								forKey: "key_for_another_image",
+								toDisk: false) // not persistent
+							ImageCache.default.retrieveImage(forKey: "key_for_image", options: nil)
+							{   image, cacheType in
+								if let image = image { imageView.image = image }
+							}</code></pre>
+							<p>Allows to store images on disk or in memory</p>
+					</section>
+					<section>
+						<h3>Image Downloader</h3>
+						<pre><code class="swift" data-noheader>
+							let task = ImageDownloader.default.downloadImage(with: url,
+								options: [], progressBlock: nil)
+							{   (image, error, url, data) in
+								print("Downloaded Image: \(image)") // not cached
+							}
+							task.cancel()
+						</code></pre>
+						<p>Images downladed directly are not cached by default</p>
+					</section>
+					<section>
+						<h3>Image Processor</h3>
+						<pre><code class="swift" data-noheader>
+							let processor = ResizingImageProcessor(targetSize: CGSize(width: 100, height: 100))
+							imageView.kf.setImage(with: url, options: [.processor(processor)])
+						</code></pre>
+						<p>There are several basic processors that can be combined</p>
+						<p>Both original and processed images can be cached</p>
+					</section>
+				</section>
+<!--	Core Image	-->
+				<section>
+					<section data-background="../img/title/default.jpg">
+						<h1>Core Image</h1>
+					</section>
+					<section>
+						<h3>CIFilter</h3>
+						<p>Lightweight, mutable object that stores input image and required parameters</p>
+						<p><code>CIKernel</code> represents a function that is executed for every single pixel on the input image
+						</p>
+					</section>
+					<section>
+						<h3>CIImage</h3>
+						<p>Renderable object that stores a filter graph reqired <br>to retrieve an image</p>
+						<p><code>CIContext</code> responsible for compiling and running the filters.<br>
+							Represents render target for resulting image
+						</p>
+					</section>
+					<section>
+						<h3>Filter Categories</h3>
+						<p>All the built-in Core Image filters belong to one or more of 21&nbsp;categories</p>
+						<pre><code class="swift" data-noheader>
+						for fName in CIFilter.filterNamesInCategory(kCICatetgoryBlur) {
+							let blur = CIFilter(name: fName)
+						}
+					</code></pre>
+					<p>Filters were designed to be used from UI applications<br />
+						Rely heavely on dictionaries and descriptions</p>
+					</section>
+					<section>
+						<h3>Detectors</h3>
+						<p>An image processor that identifies features <br>
+						Barcodes, QR-codes and faces are supported</p>
+						<pre><code class="swift" data-noheader>
+							let faceDetector = CIDetector(ofType: CIDetectorTypeFace,
+								context: nil,
+								options: [CIDetectorAccuracy : CIDetectorAccuracyHigh])
+							let faces = faceDetector.featuresInImage(personciImage)
+							for face in faces as! [CIFaceFeature] { /*...*/ }
+						</code></pre>
+						<p class="notice">Replaced by Vision framework in iOS 11 <br>
+						<small>not depricated</small></p>
+					</section>
+					<section>
+						<h3>Generators</h3>
+						<p>Create target image with described content</p>
+						<pre><code class="swift" data-noheader>
+							let data = "http://mmcs.sfedu.ru".data(using: String.Encoding.isoLatin1)
+							var qr = CIFilter(name: "CIQRCodeGenerator")!
+							qr.setValue(data, forKey: "inputMessage")
+							qr.setValue("H", forKey: "errorCorrection")
+							let scaleUp = CGAffineTransform(scaleX: 100, y: 100)
+							let output = qr.outputImage?.transformed(by: 	scaleUp)
+						</code></pre>
+					</section>
+					<section>
+						<h3>Applying Filter</h3>
+						<pre><code class="swift" data-noheader>
+							let blur = CIFilter(name: "CIZoomBlur")!
+							blur.setDefaults()
+							if let input = UIImage(named: "my_image.jpg")?.ciImage {
+								blur.setValue(input, forKey: kCIInputImageKey)
+							}
+							outputView.image = UIImage(ciImage: blur.outputImage)
+						</code></pre>
+						<p class="notice">Each time you render UIImage a new CIContext is created</p>
+					</section>
+					<section>
+						<h3>Applying Filter to Video</h3>
+						<p>To to apply filter to each frame we need pixelBuffer associated with that frame</p>
+						<pre><code class="swift" data-noheader>
+							videoOutput = AVPlayerItemVideoOutput()
+							player.currentItem.addOutput(videoOutput)
+							// create display refresh callback
+							let displayLink = CADisplayLink(target: self, selector: self.displayLinkDidRefresh(link:))
+							displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
+							// on each display refresh
+							func displayLinkDidRefresh(link: CADisplayLink) {
+								let itemTime = videoOutput.itemTimeForHostTime(CACurrentMediaTime())
+								if videoOutput.hasNewPixelBufferForItemTime(itemTime) {
+									let pixelBuffer = videoOutput.copyPixelBufferForItemTime(itemTime, itemTimeForDisplay: nil)
+									let image = CIImage(buffer: pixelBuffer)
+								}
+							}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Image Rendering</h3>
+						<p>
+							For better perfomance we can render CIImage using OpenGL
+						</p>
+						<pre><code class="swift" data-noheader>
+							let eaglContext = EAGLContext(api: .openGLES2)!
+							let glkView = GLKView(frame: self.bounds,
+								context: eaglContext)
+							lazy var ciContext: CIContext = {
+								[unowned self] in
+								return CIContext(eaglContext: eaglContext, // GPU-based
+									options: [kCIContextWorkingColorSpace: NSNull()])
+							}()
+						</code></pre>
+						<p>Drawing CIImage to an existing context is much faster.<br> By associating ciContext with a glContext we are able to store result in a buffer and redraw it only when neccesary</p>
+					</section>
+				</section>
+<!-- Custom Filters	-->
+				<section>
+					<section data-background="../img/title/default.jpg">
+						<h1>Custom Filters</h1>
+					</section>
+					<section>
+						<h3>Composite Filters</h3>
+						<p>Several filters can be combined into a single filter</p>
+						<pre><code class="swift" data-noheader>
+						override var outputImage: CIImage? {
+							let glowingImage = CIFilter( name: "CIColorControls",
+								withInputParameters: [kCIInputImageKey: inputImage, kCIInputSaturationKey: 1.75])?
+							.outputImage?.applyingFilter( "CIBloom",
+								parameters: [ kCIInputRadiusKey: 2.5, kCIInputIntensityKey: 1.25])
+							.cropped(to: inputImage.extent)
+							return glowingImage
+						}</code></pre>
+					</section>
+					<section>
+						<h3>Filter Attributes</h3>
+						<p>Provide generalized interface for custom filters</p>
+						<pre><code class="swift" data-noheader>
+							override var attributes: [String : Any] {
+								return [ kCIAttributeFilterDisplayName: "My Filter Name",
+									"inputParam": [ kCIAttributeIdentity: 0,
+										kCIAttributeDisplayName: "Parameter Name",
+										kCIAttributeMin: 0,
+										kCIAttributeDefault: 10,
+										kCIAttributeSliderMin: 0,
+										kCIAttributeSliderMax: 100,
+										kCIAttributeClass: "NSNumber",
+										kCIAttributeType: kCIAttributeTypeScalar ]
+								]
+							}</code></pre>
+					</section>
+					<section>
+						<h3>Register Custom Filter</h3>
+						<pre><code class="swift" data-noheader>
+							class MyFilterConstructor: NSObject, CIFilterConstructor {
+								func filterWithName(_ name: String) -> CIFilter? {
+									if name == "My Filter Name" {
+										return MyFilter()
+									}
+									return nil
+								}
+							}
+							CIFilter.registerName("My Filter Name",
+								constructor: MyFilterConstructor,
+							)
+						</code></pre>
+						<p><code>CIFilterConstructor</code> an object that represents filter category
+							and implements <code>filterWithName(_:)</code></p>
+					</section>
+					<section>
+						<h3>Core Image Kernel Language</h3>
+						<p>Defines functions, data types, and keywords that you can use to specify image processing operations for custom Core Image filters that you write</p>
+						<pre><code class="swift" data-noheader>
+							let kernel = CIWarpKernel(source: " /* kernel */ ")
+							kernel.apply(extent: inputImage.extent, roiCallback: {
+								(index, rect) in return rect
+							}, image: inputImage, arguments: arguments)
+						</code></pre>
+					</section>
+					<section>
+						<h3>CIWrapKernel</h3>
+						<p>Changes pixel position</p>
+						<pre><code data-noheader>
+							kernel vec2 upsideDownWarp(vec2 extent) {
+								return vec2(destCoord().x, extent.y - destCoord().y);
+							}
+						</code></pre>
+						<p><code>destCoord()</code> returns pixel coordinates for curent pixel</p>
+					</section>
+					<section>
+						<h3>CIColorKernel</h3>
+						<p>Changes pixel color</p>
+						<pre><code data-noheader>
+							kernel vec4 thresholdFilter(__sample pixel) {
+								return vec4(sqrt(pixel.rgb), image.a);
+							}
+						</code></pre>
+						<p><code>__sample</code> contains data for current pixel</p>
+					</section>
+				</section>
+				<section>
+					<h3 style="display:none;">Related Resources</h3>
+					<ul>
+						<li>
+							<a href="https://developer.apple.com/library/content/documentation/GraphicsImaging/Reference/CIKernelLangRef/ci_gslang_ext.html">Core Image Kernel Language</a>
+						</li>
+					</ul>
+				</section>
+      </div>
+    </div>
+
+    <script src="../lib/js/head.min.js"></script>
+    <script src="../js/reveal.js"></script>
+    <script src="../js/swift.js"></script>
+
+    <svg height="0" xmlns="http://www.w3.org/2000/svg">
+        <filter id="drop-shadow">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+            <feOffset dx="12" dy="12" result="offsetblur"/>
+            <feFlood flood-color="rgba(0,0,0,0.5)"/>
+            <feComposite in2="offsetblur" operator="in"/>
+            <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </svg>
+  </body>
+</html>

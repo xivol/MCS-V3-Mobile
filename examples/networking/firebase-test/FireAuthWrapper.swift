@@ -40,8 +40,6 @@ class FireAuthWrapper: NSObject, FUIAuthDelegate {
     
     public var signInController: UIViewController {
         let authVC = ui.authViewController()
-        
-        authVC.navigationBar.tintColor = .red
         // remove cancel button
         authVC.navigationBar.items?[0].leftBarButtonItems = nil
         return authVC
@@ -49,6 +47,10 @@ class FireAuthWrapper: NSObject, FUIAuthDelegate {
     
     public var currentUser: User? {
         return auth.currentUser
+    }
+    
+    public var isSignedIn: Bool {
+        return currentUser != nil
     }
     
     public override init() {
@@ -79,11 +81,11 @@ class FireAuthWrapper: NSObject, FUIAuthDelegate {
             [weak self] (usr, error) in
             guard let error = error else {return}
             self?.delegate?.failed(withError: error, onAction: .signIn)
-            self?.ui.auth?.currentUser
         }
     }
     
     public func signOut() {
+        print("signing out")
         do { try auth.signOut() }
         catch let error as NSError {
             delegate?.failed(withError: error, onAction: .signOut)

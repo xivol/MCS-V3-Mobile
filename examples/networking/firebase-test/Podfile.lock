@@ -148,6 +148,7 @@ DEPENDENCIES:
   - Firebase/Auth
   - Firebase/Core
   - Firebase/Database
+  - Firebase/Storage
   - FirebaseUI
 
 SPEC CHECKSUMS:
@@ -179,6 +180,6 @@ SPEC CHECKSUMS:
   TwitterCore: e0420b01e02e7d20e94690e37f43e75de219ab8d
   TwitterKit: 205ac89824bbfe9e85a16c420d30bb7bcbedac45
 
-PODFILE CHECKSUM: 88c4c495a6a7a53542165e0fb2ca013d0881c370
+PODFILE CHECKSUM: bd967fbbdb841a41c5daad12e7dd903a7df1074c
 
 COCOAPODS: 1.3.1

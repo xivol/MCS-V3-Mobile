@@ -1,0 +1,352 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>MADe withSwift. iCloud and CloudKit</title>
+
+		<link rel="stylesheet" href="../css/reveal.css">
+		<link rel="stylesheet" href="../css/theme/swift.css">
+		<!-- Theme used for syntax highlighting of code included in main theme -->
+		<!-- Printing and PDF exports -->
+		<script type="text/javascript">
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+ 		</script>
+		<style>
+		#swift-bird{
+      -webkit-clip-path: polygon(5% 20%, 90% -10%, 90% 80%, 5% 110%);
+			clip-path: polygon(5% 20%, 90% -10%, 90% 80%, 5% 110%);
+			/*max-height: 100%*/
+		}
+		</style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="topbar">
+				<div class="breadcrumbs">
+				</div>
+			</div>
+			<div class="slides">
+				<section>
+					<h2><a href="https://xivol.github.io/MCS-V3-Mobile/">MCSv3</a></h2>
+					<h1>Mobile Development</h1>
+					<p>
+						</br>Ilya Loshkarev</br>
+						<a href="mailto:loshkarev.i@gmail.com">loshkarev.i@gmail.com</a>
+					</p>
+					<p class="footer">
+						<br>SFEDU 2017
+					</p>
+				</section>
+				<section>
+					<h3 class="hidden">Overview</h3>
+					<div class="row">
+						<div class="col">
+						<ul>
+							<li>
+								<a href="#/2">iCloud Fundamentals</a>
+							</li>
+							<li>
+								<a href="#/3">Documents in iCloud</a>
+							</li>
+							<li>
+								<a href="#/4">CoreData in iCloud</a>
+							</li>
+							<li>
+								<a href="#/5">CloudKit</a>
+							</li>
+						</ul>
+						</div>
+						<div class="col">
+							<img id="swift-bird" src="../img/flurry.jpg" />
+						</div>
+					</div>
+				</section>
+<!--	iCloud Fundamentals	-->
+				<section>
+					<section data-background="../img/title/default.jpg">
+						<h1>iCloud Fundamentals</h1>
+					</section>
+					<section>
+						<h3>Overview</h3>
+						<div class="row">
+							<div class="col">
+								<img class="medium" src="../img/iCloud/iCloud_intro_2x.png" alt="iCloud Intro">
+							</div>
+							<div class="col">
+								<p>iCloud is a free service that lets users access their personal content on all their devices—wirelessly and automatically via Apple ID</p>
+							</div>
+						</div>
+						<p>Allows you to share user or app data among multiple instances of your app running on different devices</p>
+					</section>
+					<section>
+						<h3>Bundle ID</h3>
+						<pre><code>ru.sfedu.schedule</code></pre>
+						<ul>
+							<li>Bundle ID &ndash; a unique identifier for your app stored in the app bundle</li>
+							<li>App ID &ndash; an identifier for one or more of your apps. Connects an app with Apple services</li>
+						</ul>
+					</section>
+					<section>
+						<h3>App ID</h3>
+						<pre><code>XYZZY12345.ru.sfedu.schedule</code></pre>
+						<ul>
+							<li>Unique identifier assigned by Apple</li>
+							<li>Stores app's capabilities</li>
+							<li>Connects to iCloud Container</li>
+							<li>Requred for any futher action with the app</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Provisioning Profiles</h3>
+						<img src="../img/iCloud/teamprovisioningprofile_2x.png" alt="Provisioning Profile">
+						<!--<p>Provisioning is the process of preparing and configuring an app to launch on devices and to use app services</p>-->
+						<p class="notice">Xcode creates and manages a team provisioning profile automtically</p>
+					</section>
+					<section>
+						<h3>iCloud Capabilities</h3>
+						<div class="row">
+							<div class="col">
+								<img class="" src="../img/iCloud/capabilitieseditor_2x.png" alt="Capabilities Editor">
+							</div>
+							<div class="col">
+								<p>The Capabilities tab manages the creation of the entitlements and containers your app needs to access iCloud</p>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h3>iCloud Container</h3>
+						<div class="row">
+							<div class="col">
+								<img src="../img/iCloud/iCloud_architecture_2x.png" alt="iCloud Container">
+							</div>
+							<div class="col">
+								<p>A ubiquity container that serves as the local representation of the corresponding iCloud storage</p>
+								<p> It is separate from the rest of app’s data</p>
+							</div>
+						</div>
+						<!-- For most iCloud services, your app does not communicate directly with iCloud servers.
+						The iCloud services encrypt data prior to transit and iCloud servers continue to store the data in an encrypted format, using secure tokens for authentication. -->
+					</section>
+					<section>
+						<h3>iCloud Key-Values Storage</h3>
+						<div class="row">
+							<div class="col">
+								<img src="../img/iCloud/ios_kv_storage_2x.png" alt="iCloud Container">
+							</div>
+							<div class="col">
+								<ul>
+									<li>1 MB data storage</li>
+									<li>1024 keys</li>
+								</ul>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h3>Observe iCloud Changes</h3>
+						<pre><code class="swift" data-noheader>
+							let keyStore = NSUbiquitousKeyValueStore.defaultStore()
+							keyStore.synchronize()
+							let center = NSNotificationCenter.defaultCenter()
+							center.addObserver(self, selector: #selector(self.iCloudKVdidChange),
+								name: NSUbiquitousKeyValueStoreDidChangeExternallyNotification,
+								object: keyStore)
+							keyStore.string(forKey: "myKey")
+						</code></pre>
+					</section>
+				</section>
+<!--	Kingfisher	-->
+				<section>
+					<section data-background="../img/title/default.jpg">
+						<h1>Documents in iCloud</h1>
+					</section>
+					<section>
+						<h3>Overview</h3>
+						<img src="../img/iCloud/.png" alt="Document">
+						<p><code class="hljs-type">UIDocument</code>s — are model controllers. A document object manages the metadata associated with a document</p>
+					</section>
+					<section>
+						<h3>UIDocument</h3>
+						<ul>
+							<li>Seamless integration with iCloud storage</li>
+							<li>Background writing and reading of document data</li>
+							<li>Saveless model</li>
+							<li>Safe saving</li>
+							<li>Support for handling errors and version conflicts</li>
+						</ul>
+					</section>
+					<section>
+						<h3>How to</h3>
+						<ul>
+							<li>Create a custom subclass of UIDocument</li>
+							<li>Allow users to create new documents and select and open existing ones</li>
+							<li>Implement undo management or change tracking</li>
+							<li>Put documents into iCloud storage</li>
+							<li>Observe notifications of changes in document state</li>
+						</ul>
+					</section>
+				</section>
+				<!-- App Store		-->
+								<section>
+									<section data-background="../img/apple_store.jpg">
+										<h1>App Store</h1>
+									</section>
+									<section>
+										<h3>App ID</h3>
+										<pre><code>XYZZY12345.ru.sfedu.schedule</code></pre>
+										<ul>
+											<li>Unique identifier assigned by Apple</li>
+											<li>Stores app's capabilities</li>
+											<li>Connects to iCloud Container</li>
+											<li>Requred for any futher action with the app</li>
+										</ul>
+									</section>
+									<section>
+										<h3>App Versions</h3>
+										<p class="notice">
+											Each new build submited to apple should have incremental version number
+										</p>
+									</section>
+									<section>
+										<h3>iTunes Connect</h3>
+										<div class="row">
+											<div class="col">
+												Allows to manage all the info requred to publish your app to the App Store
+											</div>
+											<div class="col">
+												<img src="../img/itunes-connect.png" alt="iTunes Connect" class="small">
+											</div>
+										</div>
+									</section>
+									<section>
+										<h3>Adding new app to iTunes Connect</h3>
+										<div class="row">
+											<div class="col">
+												<ul>
+													<li>Provide general app information</li>
+													<li>Set app ratings (4+, 12+, ...)</li>
+													<li>Add app preview and screenshots</li>
+													<li>Set pricing and availiability</li>
+													<li>Upload a build</li>
+												</ul>
+											</div>
+											<div class="col">
+												<img src="../img/test-flight.png" alt="iTunes Connect page">
+											</div>
+										</div>
+									</section>
+									<section>
+										<h3>Test Flight</h3>
+										<p>Built in closed beta test service</p>
+										<div class="row">
+											<div class="col">
+												<ul>
+													<li class="notice">iOS 8.0+</li>
+													<li>You can invite up to 2000 external testers</li>
+													<li>Users that recieve test invitations must download TestFlight app to redeem their invitation</li>
+												</ul>
+											</div>
+											<div class="col">
+												<img src="../img/test-flight.jpg" alt="Test Flight">
+											</div>
+										</div>
+									</section>
+									<section>
+										<h3>App Store Review</h3>
+										<blockquote><p>
+											We review all apps submitted to the App Store
+											in an effort to determine whether they are reliable,
+											perform as expected, and are free of offensive material
+											</p>
+										</blockquote>
+										<p class="notice">
+											Review process is manual and can take up to several days
+										</p>
+									</section>
+									<section>
+										<h3>App Store Guidelines</h3>
+										<ul>
+											<li class="notice">Please don’t treat App Review as a software testing service</li>
+											<li class="notice">Turn on your back-end service</li>
+											<li class="notice">Make sure to replace all placeholders</li>
+											<li class="notice">Apps should be self-contained in their bundles</li>
+											<li class="notice">Apps should use APIs and frameworks for their intended purposes</li>
+										</ul>
+									</section>
+									<section>
+										<h3>App Store Content Guidelines</h3>
+										<!--<img src="../img/children.jpg" alt="WON'T SOMEBODY PLEASE THINK OF THE CHILDREN">-->
+										<blockquote cite="https://developer.apple.com/app-store/review/guidelines/">
+											<p>
+												We will reject apps for any content or behavior that we believe is over the line.
+											</p></blockquote>
+									</section>
+									<section>
+										<h3 class="hidden">App Store Content Guidelines 2</h3>
+										<img src="http://emojipedia-us.s3.amazonaws.com/cache/a8/5e/a85e5bfe98da45f456f28e21f2b9b0dc.png" alt="puke">
+										<p>Apps should not include content that is offensive, insensitive, upsetting, intended to disgust, or in exceptionally poor taste</p>
+									</section>
+									<section>
+										<h3 class="hidden">App Store Content Guidelines 3</h3>
+										<img src="http://emojipedia-us.s3.amazonaws.com/cache/8c/22/8c22a55f282cbd14e41bae9d5d8f5577.png" alt="injury">
+										<p>Apps should not urge customers to use their devices in a way that contradicts safety documentation for Apple hardware, risking damage to the device or physical harm to people</p>
+									</section>
+									<section>
+										<h3 class="hidden">App Store Content Guidelines 4</h3>
+										<img src="http://emojipedia-us.s3.amazonaws.com/cache/f2/6f/f26f7d4f50ba65126da92c557fca6e21.png" alt="hate">
+										<p>Apps with services that end up being used primarily for pornographic content, objectification of real people, making physical threats, or bullying <em>may be removed without notice</em></p>
+									</section>
+									<section>
+										<h3 class="hidden">App Store Content Guidelines 5</h3>
+										<img src="http://emojipedia-us.s3.amazonaws.com/cache/51/4c/514cf06b40e3b39892dbeee079d46af8.png" alt="target">
+										<p>“Enemies” within the context of a game cannot solely target a specific race, culture, real government, corporation, or any other real entity</p>
+									</section>
+									<section>
+										<h3>Dealing with Rejection</h3>
+										<img src="http://emojipedia-us.s3.amazonaws.com/cache/28/04/28047b14d7574c05fede5378fd178c48.png" alt="rejection">
+										<p>You can correspond with Apple through the Resolution Center until you resubmit the build to App Review</p>
+										<p class="notice">Multiple failed attempts may lead to removal from the Developer Program if seen as spam</p>
+									</section>
+									<section>
+										<h3>Profit?</h3>
+										<ul>
+											<li>Apple takes 30%</li>
+											<li>You will get paid every month assuming you make (after Apple's cut) $250 in the region</li>
+											<li>If you make anything under the 250$ mark you have to file a request to get your money</li>
+										</ul>
+									</section>
+								</section>
+				</section>
+				<section>
+					<h3 style="display:none;">Related Resources</h3>
+					<ul>
+						<li>
+						</li>
+					</ul>
+				</section>
+      </div>
+    </div>
+
+    <script src="../lib/js/head.min.js"></script>
+    <script src="../js/reveal.js"></script>
+    <script src="../js/swift.js"></script>
+
+    <svg height="0" xmlns="http://www.w3.org/2000/svg">
+        <filter id="drop-shadow">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+            <feOffset dx="12" dy="12" result="offsetblur"/>
+            <feFlood flood-color="rgba(0,0,0,0.5)"/>
+            <feComposite in2="offsetblur" operator="in"/>
+            <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </svg>
+  </body>
+</html>

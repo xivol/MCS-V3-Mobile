@@ -10,23 +10,17 @@ import UIKit
 
 class EditViewController: UIViewController {
     @IBOutlet weak var titleInput: UITextField!
-    
     @IBOutlet weak var textInput: UITextView!
     
     @IBAction func doneTouched(_ sender: UIBarButtonItem) {
-        let note = Note(date: Date(), title: titleInput.text!, text: textInput.text)
-        FireWrapper.data.set(note, atPath: Note.path)
         
-        self.navigationController?.popViewController(animated: true)?.dismiss(animated: false, completion: nil)
+        let note = Note(date: Date(), title: titleInput.text!, text: textInput.text, fireId: nil)
+        FireWrapper.data.setUserData(value: note, atPath: Note.path)
+        
+        if let vc = navigationController?.popViewController(animated: true) {
+            vc.dismiss(animated: false)
+        } else {
+            self.dismiss(animated: true)
+        }
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
