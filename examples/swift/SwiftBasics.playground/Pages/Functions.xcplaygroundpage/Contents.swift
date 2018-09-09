@@ -57,6 +57,7 @@ func calc(_ fun: (Int) -> Int, arg: Int) -> Int {
 }
 
 calc(sqr, arg: 5)
+calc(-, arg:7)
 //: You can also define function inside the body of another functions, known as nested functions.
 func operation(_ c: Character) -> (Int,Int) -> Int {
     func add( a: Int, b: Int) -> Int {

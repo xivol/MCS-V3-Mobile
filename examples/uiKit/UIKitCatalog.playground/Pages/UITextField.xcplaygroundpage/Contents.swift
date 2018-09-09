@@ -66,3 +66,4 @@ imageBack.addTarget(controller, action: #selector(Controller.editingDidEnd(sende
 textView.delegate = controller
 
 PlaygroundPage.current.liveView = containerView
+//: [Previous](@previous) | [Table of Contents](TableOfContents) | [Next](@next)

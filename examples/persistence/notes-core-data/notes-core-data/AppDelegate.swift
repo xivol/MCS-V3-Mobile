@@ -26,6 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
     func applicationWillTerminate(_ application: UIApplication) {
         CoreDataContainer.saveContext()
+        let e = 
     }
 
     // MARK: - Split view

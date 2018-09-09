@@ -3,19 +3,24 @@
    version = "3.0">
    <TimelineItems>
       <LoggerValueHistoryTimelineItem
-         documentLocation = "#CharacterRangeLen=9&amp;CharacterRangeLoc=800&amp;EndingColumnNumber=19&amp;EndingLineNumber=36&amp;StartingColumnNumber=5&amp;StartingLineNumber=36&amp;Timestamp=526998773.578984"
+         documentLocation = "file:///Users/ilaloskarev/Swift/CS333/MCS-V3-Mobile/examples/swift/SwiftBasics.playground/Pages/Strings.xcplaygroundpage#CharacterRangeLen=9&amp;CharacterRangeLoc=834&amp;EndingColumnNumber=20&amp;EndingLineNumber=39&amp;StartingColumnNumber=11&amp;StartingLineNumber=39&amp;Timestamp=557833259.559729"
          selectedRepresentationIndex = "1"
          shouldTrackSuperviewWidth = "NO">
       </LoggerValueHistoryTimelineItem>
       <LoggerValueHistoryTimelineItem
-         documentLocation = "#CharacterRangeLen=8&amp;CharacterRangeLoc=801&amp;EndingColumnNumber=12&amp;EndingLineNumber=36&amp;StartingColumnNumber=5&amp;StartingLineNumber=36&amp;Timestamp=526998773.579262"
+         documentLocation = "file:///Users/ilaloskarev/Swift/CS333/MCS-V3-Mobile/examples/swift/SwiftBasics.playground/Pages/Strings.xcplaygroundpage#CharacterRangeLen=8&amp;CharacterRangeLoc=835&amp;EndingColumnNumber=20&amp;EndingLineNumber=39&amp;StartingColumnNumber=12&amp;StartingLineNumber=39&amp;Timestamp=557833259.5599951"
          selectedRepresentationIndex = "0"
          shouldTrackSuperviewWidth = "NO">
       </LoggerValueHistoryTimelineItem>
       <LoggerValueHistoryTimelineItem
-         documentLocation = "#CharacterRangeLen=18&amp;CharacterRangeLoc=791&amp;EndingColumnNumber=23&amp;EndingLineNumber=36&amp;StartingColumnNumber=5&amp;StartingLineNumber=36&amp;Timestamp=526998773.579415"
+         documentLocation = "file:///Users/ilaloskarev/Swift/CS333/MCS-V3-Mobile/examples/swift/SwiftBasics.playground/Pages/Strings.xcplaygroundpage#CharacterRangeLen=18&amp;CharacterRangeLoc=825&amp;EndingColumnNumber=20&amp;EndingLineNumber=39&amp;StartingColumnNumber=2&amp;StartingLineNumber=39&amp;Timestamp=557833259.560122"
          lockedSize = "{175, 50}"
          selectedRepresentationIndex = "1"
+         shouldTrackSuperviewWidth = "NO">
+      </LoggerValueHistoryTimelineItem>
+      <LoggerValueHistoryTimelineItem
+         documentLocation = "file:///Users/ilaloskarev/Swift/CS333/MCS-V3-Mobile/examples/swift/SwiftBasics.playground/Pages/Strings.xcplaygroundpage#CharacterRangeLen=65&amp;CharacterRangeLoc=1934&amp;EndingColumnNumber=63&amp;EndingLineNumber=77&amp;StartingColumnNumber=69&amp;StartingLineNumber=76&amp;Timestamp=557833259.560245"
+         selectedRepresentationIndex = "0"
          shouldTrackSuperviewWidth = "NO">
       </LoggerValueHistoryTimelineItem>
    </TimelineItems>

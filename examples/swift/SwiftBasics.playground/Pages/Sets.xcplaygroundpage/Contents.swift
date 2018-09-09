@@ -8,18 +8,18 @@ import Foundation
 var letters = Set<Character>()
 
 let alphabet = "abcdefghijklmnopqrstuvwxyz"
-for c in alphabet.characters {
+for c in alphabet {
     letters.insert(c)
 }
 //: Init from sequence
-var lorem = Set<Character>("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.".characters)
+var lorem = Set<Character>("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
 
-for c in alphabet.characters {
+for c in alphabet {
     lorem.remove(c)
 }
 lorem
 
-let digits = Set<Character>("1234567890".characters)
+let digits = Set<Character>("1234567890")
 let alphanum = letters.union(digits)
 
 digits.union(letters) == alphanum
@@ -34,12 +34,12 @@ letters.isStrictSubset(of: letters)
 digits.isDisjoint(with: letters)
 
 alphanum.contains("9")
-alphanum.isSuperset(of: "0x2a".characters)
+alphanum.isSuperset(of: "0x2a")
 //: ### Set Operations
 var animals: Set<Character> = ["🐰","🦊","🐻","🐼","🐹"]
-animals.intersection("🐰🐱🐶🐻🐙".characters)
-animals.symmetricDifference("🐰🐱🐶🐻🐙".characters)
-animals.subtracting("🐰🐱🐶🐻🐙".characters)
-animals.union("🐰🐱🐶🐻🐙".characters)
+animals.intersection("🐰🐱🐶🐻🐙")
+animals.symmetricDifference("🐰🐱🐶🐻🐙")
+animals.subtracting("🐰🐱🐶🐻🐙")
+animals.union("🐰🐱🐶🐻🐙")
 //: ****
 //:  [Table of Contents](TableOfContents) · [Previous](@previous) · [Next](@next)

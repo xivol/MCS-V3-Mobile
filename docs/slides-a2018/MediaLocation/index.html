@@ -1,0 +1,531 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Swift-CS333. Location &amp; Media</title>
+
+		<link rel="stylesheet" href="../css/reveal.css">
+		<link rel="stylesheet" href="../css/theme/swift.css">
+		<!-- Theme used for syntax highlighting of code included in main theme -->
+		<!-- Printing and PDF exports -->
+		<script type="text/javascript">
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+ 		</script>
+		<style>
+		#swift-bird{
+      -webkit-clip-path: polygon(5% 20%, 90% -10%, 90% 80%, 5% 110%);
+			clip-path: polygon(5% 20%, 90% -10%, 90% 80%, 5% 110%);
+			/*max-height: 100%*/
+		}
+		</style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="topbar">
+				<div class="breadcrumbs">
+				</div>
+			</div>
+			<div class="slides">
+				<section>
+					<h2><a href="https://xivol.github.io/Swift-CS333/">CS333</a></h2>
+					<h1>Mobile Development</h1>
+					<p>
+						</br>Ilya Loshkarev</br>
+						<a href="mailto:loshkarev.i@gmail.com">loshkarev.i@gmail.com</a>
+					</p>
+					<p class="footer">
+						<br>SFEDU 2017
+					</p>
+				</section>
+				<section>
+					<h3 class="hidden">Overview</h3>
+					<div class="row">
+						<div class="col">
+						<ul>
+							<li>
+								<a href="#/2">Core Location</a>
+							</li>
+							<li>
+								<a href="#/3">Map Kit</a>
+							</li>
+							<li>
+								<a href="#/4">AV Foundation</a>
+							</li>
+							<li>
+								<a href="#/5">User Notifications</a>
+							</li>
+						</ul>
+						</div>
+						<div class="col">
+							<img id="swift-bird" src="../img/flurry.jpg" />
+						</div>
+					</div>
+				</section>
+<!--	Location	-->
+				<section>
+					<section data-background="../img/location.jpg">
+						<h1>Core Location</h1>
+					</section>
+					<section>
+						<h3>Location Manager</h3>
+						<ul>
+							<li>Tracks changes in the user’s current location</li>
+							<li>Reports changes from the onboard compass</li>
+							<li>Monitors regions of interest</li>
+							<li>Reports the range to nearby beacons</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Permissions</h3>
+						<pre><code data-noheader>
+							// Authorize for location tracking in foreground
+							locationManager.requestWhenInUseAuthorization()
+							// Authorize for location tracking in background
+							locationManager.requestAlwaysAuthorization()
+						</code></pre>
+						<p class="notice"> Fails silently without permission</p>
+						<p>Requires related privacy keys in <code class="hljs-type">Info.plist</code></p>
+					</section>
+					<section>
+						<h3>Authorization Status</h3>
+						<pre><code src="CLAuthorizationStatus">
+							.authorizedAlways // authorization for background updates
+							.authorizedWhenInUse // authorization for foreground updates
+							.notDetermined // authorization is not granted yet
+							.restricted // authorization is restricted by the device
+							.denied // authorization is explicitly denied
+						</code></pre>
+						<pre><code class="swift" data-noheader>
+							CLLocationManager.authorizationStatus()
+						</code></pre>
+					</section>
+					<section>
+						<h3>Enable Location Updates</h3>
+						<pre><code class="swift" data-noheader>
+							locationManager.startUpdatingLocation()
+							locationManager.startMonitoringSignificantLocationChanges()
+							locationManager.startUpdatingHeading()
+							locationManager.startMonitoring(for: CLRegion)
+						</code></pre>
+					</section>
+					<section>
+						<h3>Location Manager Delegate</h3>
+						<pre><code class="swift" data-noheader>
+							locationManager(_:didChangeAuthorization:)
+							locationManager(_:didUpdateLocations:)
+							locationManager(_:didUpdateTo:from:)
+							locationManager(_:didUpdateHeading:)
+							locationManager(_:didEnterRegion:)
+						</code></pre>
+						<p>The protocol whose methods you use to receive events from an associated location manager object</p>
+					</section>
+					<section>
+						<h3>Location</h3>
+						<pre><code class="swift" src="CLLocation">
+							var coordinate: CLLocationCoordinate2D
+							var altitude: CLLocationDistance
+							var timestamp: Date
+							var speed: CLLocationSpeed
+							var course: CLLocationDirection
+						</code></pre>
+					</section>
+					<section>
+						<h3>Accuracy</h3>
+						<pre><code class="swift" data-noheader>
+							locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+							locationManager.distanceFilter = 1
+							let accuracy = locationManager.location!.horisontalAccuracy
+						</code></pre>
+						<p class="notice">
+							Less accurate location methods save battery power
+						</p>
+					</section>
+				</section>
+<!--	MapKit	-->
+				<section>
+					<section data-background="../img/apple-maps.png">
+						<h1>Map Kit</h1>
+					</section>
+					<section>
+						<h3>Apple Maps</h3>
+						<ul>
+							<li>Released with iOS 6 (19.09.12)</li>
+							<li>Replaced Google Maps</li>
+							<li>Fully vectorized</li>
+						</ul>
+					</section>
+					<section>
+						<h3>MapView</h3>
+						<pre><code class="swift" data-noheader>
+							mapView.mapType = .hybrid
+							mapView.showBuildings = true
+						</code></pre>
+						<p>Provides an embeddable map interface, similar to the one provided by the Maps application</p>
+					</section>
+					<section>
+						<h3>Annotations</h3>
+						<pre><code class="swift" data-noheader>
+							protocol MKAnnotation : NSObjectProtocol {
+								public var coordinate: CLLocationCoordinate2D { get }
+
+								optional public var title: String? { get }
+								optional public var subtitle: String? { get }
+							}
+						</code></pre>
+						<p>To use this protocol, you adopt it in any custom objects that store or represent annotation data</p>
+					</section>
+					<section>
+						<h3>Map View Delegate</h3>
+						<pre><code class="swift" data-noheader>
+							mapView(_:viewFor:)
+						</code></pre>
+					</section>
+					<section>
+						<h3>Annotation Views</h3>
+						<pre><code class="swift" data-noheader>
+							func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+								let pin = mapView.dequeueReusableAnnotationView(
+										withIdentifier: "pinAnnotationView") as! MKPinAnnotationView
+								pin.annotation = annotation
+								return pin
+							}
+						</code></pre>
+						<p class="notice">Annotation views remain anchored to the map at the point specified by their associated annotation object</p>
+					</section>
+					<section>
+						<h3>Geocoder</h3>
+						<pre><code class="swift" src="CLGeocoder">
+							geocodeAddressString(addressString: String,
+										completionHandler:([CLPlacemark]?, Error?) -> Void)
+							reverseGeocodeLocation(_ location: CLLocation,
+										completionHandler: ([CLPlacemark]?, Error?) -> Void)
+						</code></pre>
+						<p>Provides services for converting between a coordinate and the user-friendly representation of that coordinate</p>
+					</section>
+					<section>
+						<h3>Map Item</h3>
+					</section>
+					<section>
+						<h3>DirectionsRequest</h3>
+					</section>
+					<section>
+						<h3>Overlay</h3>
+					</section>
+				</section>
+<!--	AV Foundation	-->
+				<section>
+					<section data-background="../img/movie-projector.jpg">
+						<h1>AVKit</h1>
+					</section>
+					<section>
+						<h3>Anatomy of Media</h3>
+						<img src="../img/avasset_track.png" alt="asset tracks" />
+						<p>
+							<code class="hljs-type">AVAsset</code> is a container for media streams
+						</p>
+					</section>
+					<section>
+						<h3>AV Player</h3>
+						<pre><code class="swift" data-noheader>
+							let player = AVPlayer(url: videoURL)
+							if player.currentItem.status == .readyToPlay {
+								player.play()
+							}
+						</code></pre>
+						<p>
+							<code class="hljs-type">AVPlayer</code> is a basic object to play media files
+						</p>
+					</section>
+					<section>
+						<h3>Anatomy of Player</h3>
+						<img src="../img/avplayer.png" alt="AVPlayer Classes Connections" />
+						<p>
+							<code class="hljs-type">AVAsset</code> is a container for media streams
+						</p>
+					</section>
+					<section>
+						<h3>AVPlayer ViewController</h3>
+						<pre><code class="swift" data-noheader>
+							let player = AVPlayer(url: videoURL)
+							let playerViewController = AVPlayerViewController()
+							playerViewController.player = player
+							self.present(playerViewController, animated: true) {
+								if let player = playerViewController.player!,
+									player.currentItem.status == .readyToPlay {
+										playerViewController.player!.play()
+									}
+							}
+						</code></pre>
+						<p>
+							<code class="hljs-type">AVPlayerViewController</code> is a default way of presenting audio and video
+						</p>
+					</section>
+					<section>
+						<h3>Player Callbacks</h3>
+						<p>
+							Most AVPlayer callbacks are KVO based
+						</p>
+						<pre><code class="swift" data-noheader>
+						// new item
+						player.addObserver(self, forKeyPath: "currentItem",
+							options: [.new, .initial] , context: nil)
+						// errors
+						player.addObserver(self, forKeyPath: "status",
+							options: nil , context: nil)
+						// update periodically
+						player.addPeriodicTimeObserver(
+							forInterval: CMTimeMake(1, 100), queue: DispatchQueue.main) {
+								time in print(String(format: "%02.2f", CMTimeGetSeconds(time)))
+							}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Queue Player</h3>
+						<pre><code data-noheader>
+							let queuePlayer = AVQueuePlayer()
+							let playerItem = AVPlayerItem(url:fileURL)
+							queuePlayer.insert(playerItem, afterItem:nil)
+							// queue as many items as you like
+							queuePlayer.play()
+						</code></pre>
+					</section>
+					<section>
+						<h3>Audio Recorder</h3>
+						<pre><code data-noheader>
+							let recorder = AVAudioRecorder(url: resultURL, settings: [:])?
+							if recorder.prepareToRecord() {
+								recorder.record()
+							}
+						</code></pre>
+						<p class="notice">
+
+						</p>
+					</section>
+					<section>
+						<h3>AV Capture View</h3>
+						<pre><code class="swift" data-noheader>
+							let session = AVCaptureSession()
+							let frontalCamera = AVCaptureDevice.defaultDevice(
+								withDeviceType: .builtInWideAngleCamera,
+								mediaType: AVMediaTypeVideo, position: .front)
+							if let input = try? AVCaptureDevice(frontalCamera) {
+								session.addInput(input)
+							}
+							view.setSession(session,
+								showVideoPreview: true, showAudioPreview: true)
+							view.delegate = self
+						</code></pre>
+						<p>
+							<code class="hljs-type">AVCaptureView</code> is a default way of presenting a video capture
+						</p>
+					</section>
+					<section>
+						<h3>Streaming Media</h3>
+						<pre><code class="swift" data-noheader>
+						let asset = AVURLAsset(streamURL)
+						asset.resourceLoader.setDelegate(self, queue: DispatchQueue.main)
+						// play video/audio
+						let playerItem = AVPlayerItem(asset:asset)
+						let player = AVPlayer(playerItem)
+						// pause if playerItem is not ready yet
+						NSNotificationCenter.default.addObserver(self,
+							selector: #selector(pauseIfStalled),
+							name: AVPlayerItemPlaybackStalledNotification, object: nil)
+						player.play()
+						</code></pre>
+						<p>
+							If you don't need to handle loading process events <br>
+							default resourceLoader works just fine
+						</p>
+					</section>
+					<section>
+						<h3>Hardware Access</h3>
+						<pre><code data-noheader>
+							let session = AVCaptureSession()
+						</code></pre>
+						<p>
+							Allows to access any capture devices <br/>
+							and configure capture settings
+						</p>
+						<small><a href="https://developer.apple.com/library/content/samplecode/AVCam/Introduction/Intro.html">AVCam Example - Apple Developer</a></small>
+					</section>
+				</section>
+<!-- User Notifications	-->
+				<section>
+					<section data-background="../img/notification-bell.jpg">
+						<h1>User Notification</h1>
+					</section>
+					<section>
+						<h3>Notification</h3>
+						<ul>
+							<li>Alert – displays a text message with possible media attachment and actions</li>
+							<li>Badge – shows a number on the app's icon</li>
+							<li>Sound – bing! din-don! etc.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>User Notification Center</h3>
+						<p>Manages the notification-related activities for your app</p>
+						<pre><code class="swift" data-noheader>
+							let center = UNUserNotificationCenter.current()
+							center.getNotificationSettings
+								{ setting in print(settings.authorizationStatus) }
+							center.requestAuthorization(options: [.alert, .sound, .badge])
+								{ granted, error in print (granted) }
+						</code></pre>
+					</section>
+					<section>
+						<h3>User Notification Center Delegate</h3>
+						<pre><code class="swift" src="UNUserNotificationCenterDelegate">
+							func userNotificationCenter(_ center: UNUserNotificationCenter,
+								didReceive response: UNNotificationResponse,
+								withCompletionHandler completionHandler: @escaping () -> Void)
+								{ /* user taped on notififcation */ }
+							func userNotificationCenter(_ center: UNUserNotificationCenter,
+								willPresent notification: UNNotification,
+								withCompletionHandler completionHandler:
+									@escaping (UNNotificationPresentationOptions) -> Void)
+								{ /* notification should be presented in foreground */ }
+						</code></pre>
+					</section>
+					<section>
+						<h3>Notification Content</h3>
+						<p>Stores the content of a local or remote notification</p>
+						<pre><code class="swift" data-noheader>
+							var content = UNMutableNotificationContent()
+							content.title = "Notification"
+							content.body = "Hello Word!"
+							content.badge = 42
+							content.sound = UNNotificationSound.default()
+							content.attachments = [ try UNNotificationAttachment(
+									identifier: "attachmentImage", url: imageUrl, options: nil) ]
+						</code></pre>
+					</section>
+					<section>
+						<h3>Notification Triggers</h3>
+						<p>Provides common behavior for subclasses that trigger the delivery of a notification</p>
+						<pre><code class="swift" data-noheader>
+							UNTimeIntervalNotificationTrigger // triggers after timeout
+							UNCalendarNotificationTrigger // triggers at specified moment
+							UNLocationNotificationTrigger // triggers for location in region
+						</code></pre>
+					</section>
+					<section>
+						<h3>Notification Request</h3>
+						<p>Contains a notification’s content and the condition that triggers its delivery</p>
+						<pre><code class="swift" data-noheader>
+						let request = UNNotificationRequest( identifier: "notificationID",
+									content: content, trigger: trigger)
+						center.add(request) { error in print(error?.localizedDescription) }
+						</code></pre>
+					</section>
+					<section>
+						<h3>Apple Push Notification Service</h3>
+						<img src="../img/remote_notif_simple_2x.png" alt="Remote Notification Scheme">
+						<p></p>
+					</section>
+					<section>
+						<h3>Remote Notifications Setup</h3>
+						<ol>
+							<li>Enable remote notifications (<em>XCode</em>)</li>
+							<li>Register with Apple Push Notification service (<em>developer.apple.com</em>)</li>
+							<li>Receive an app-specific device token</li>
+							<li>Send the device token to your notification provider server</li>
+							<li>Handle incoming remote notifications</li>
+						</ol>
+					</section>
+					<section>
+						<h3>Registering for APN</h3>
+						<pre><code class="swift" data-noheader>
+							UIApplication.shared.registerForRemoteNotifications()
+						</code></pre>
+						<pre><code class="swift" src="UIApplicationDelegate">
+							application(_:didRegisterForRemoteNotificationsWithDeviceToken:)
+							application(_:didFailToRegisterForRemoteNotificationsWithError:)
+						</code></pre>
+						<p class="notice">Device token should be sent by Provider to APN Services <br>
+							 for the notification to be delivered</p>
+					</section>
+					<section>
+						<h3>Handling Remote Notifications</h3>
+						<pre><code class="swift" src="UIApplicationDelegate">
+							func application(_ application: UIApplication,
+							didReceiveRemoteNotification userInfo: [AnyHashable : Any],
+							fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void)) {
+								guard let data = userInfo as? [String : Any] else { return }
+								// process data and call handler
+								completionHandler(.newData)
+							}
+						</code></pre>
+						<p>The system launches your app <br>
+							(and puts it in the background state) <br>
+							when a remote notification arrives</p>
+					</section>
+					<section>
+						<h3>Notification Service Extension</h3>
+						<p>
+							Provides additional notififcation handling logic
+						</p>
+						<pre><code class="swift" data-noheader>
+							class NotificationService: UNNotificationServiceExtension {
+								override func didReceiveNotificationRequest(
+										request: UNNotificationRequest,
+										withContentHandler contentHandler: (UNNotificationContent) -&gt; Void)
+									{ /* populate notification content */ }
+								override func serviceExtensionTimeWillExpire()
+									{ /* notififcation will be terminated */ }
+							}
+						</code></pre>
+						<p class="notice">
+							Additional binary target compiled by Xcode
+						</p>
+					</section>
+					<section>
+						<h3>Notification Content Extension</h3>
+						<p>Allows to configure UIViewController<br />
+							 as an attachment for notififcation</p>
+						<img src="../img/add-nce-target.png" alt="Notification Content Extemsion" class="small">
+						<p class="notice">
+							Additional binary target compiled by Xcode
+						</p>
+					</section>
+				</section>
+				<section>
+					<h3 style="display:none;">Related Resources</h3>
+					<ul>
+						<li><a href="https://developer.apple.com/reference/avkit/avplayerviewcontroller">AVPlayerViewController</a></li>
+						<!--https://developer.apple.com/library/content/documentation/AudioVideo/Conceptual/MediaPlaybackGuide/Contents/Resources/en.lproj/ExploringAVFoundation/ExploringAVFoundation.html#//apple_ref/doc/uid/TP40016757-CH4-SW1-->
+						<li><a href="https://developer.apple.com/library/content/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/04_MediaCapture.html">AVFoundation Programming Guide - Apple Developer</a></li>
+						<li><a href="https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/index.html#//apple_ref/doc/uid/TP40008194-CH3-SW1">Local and Remote Notification Programming Guide</a></li>
+						<li><a href="https://developer.apple.com/reference/usernotifications">UserNotifications – API Reference</a></li>
+					</ul>
+				</section>
+
+
+      </div>
+    </div>
+
+    <script src="../lib/js/head.min.js"></script>
+    <script src="../js/reveal.js"></script>
+    <script src="../js/swift.js"></script>
+
+    <svg height="0" xmlns="http://www.w3.org/2000/svg">
+        <filter id="drop-shadow">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+            <feOffset dx="12" dy="12" result="offsetblur"/>
+            <feFlood flood-color="rgba(0,0,0,0.5)"/>
+            <feComposite in2="offsetblur" operator="in"/>
+            <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </svg>
+  </body>
+</html>

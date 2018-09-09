@@ -50,3 +50,4 @@ for i in 0..<(rows * cols) {
 
 
 PlaygroundPage.current.liveView = containerView
+//: [Previous](@previous) | [Table of Contents](TableOfContents) | [Next](@next)

@@ -14,7 +14,8 @@ helloString = "Hello, Optional!"
 //:
 //: Values can be wrapped into an opional type
 var optInt = Int?(4)  // Int?(4)
-// optInt = nil
+var optInt2: Int? = 4
+optInt = nil
 
 if optInt == nil {
     "empty"
@@ -35,6 +36,7 @@ let conditionalLowerString = helloString?.lowercased()
 type(of: conditionalLowerString)
 //: ### Optional Binding
 if let boundPi = Double(stringPi) {
+    type(of: boundPi)
     "rounded pi is \(boundPi.rounded())"
 }
 

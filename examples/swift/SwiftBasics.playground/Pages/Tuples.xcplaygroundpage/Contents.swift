@@ -3,13 +3,14 @@
  [Table of Contents](TableOfContents) · [Previous](@previous) · [Next](@next)
  ****
  */
-var pair: (String, Int)
+var pair: (String, Int, Double)
 pair.0 = "Swift"
 pair.1 = 333
+pair.2 = 3.4
 
 pair
 
-var namedPair: (name: String, age: Int)
+var namedPair: (name: String, age: Int) = ("Ilya", 30)
 namedPair.name = "Ilya"
 namedPair.age = 29
 

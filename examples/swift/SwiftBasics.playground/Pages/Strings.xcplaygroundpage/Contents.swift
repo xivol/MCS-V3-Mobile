@@ -7,9 +7,9 @@ import Foundation
 
 var hello = "Hello, playground"
 hello += "!"
-for c in hello.characters { c }
+//for c in hello.characters { c }
 //: _The syntax in Swift 4 will go back to how it originally was in Swift._
-// for c in hello { c }
+ for c in hello { c }
 
 //: ### String Initialization
 let pi = 3.141592653589793
@@ -21,6 +21,9 @@ let formatedString = String(format: "%#x, %d", 255, 0x2a)
 /*:
  ### String Views
  */
+let justUtf = "qwert"
+justUtf.count
+
 let utf16Rep = "Ё"
 utf16Rep.utf8.count
 utf16Rep.utf16.count
@@ -54,25 +57,24 @@ abc.insert("|", at: end)
 abc[start...end]
 abc.removeSubrange(start...end)
 //:
-abc.characters.count
-abc.utf16.startIndex
+abc.count
 let distance = abc.distance(from: start, to: end)
 let insertion = String(repeating: "|", count: distance)
-abc.insert(contentsOf: insertion.characters, at: start)
+abc.insert(contentsOf: insertion, at: start)
 //:
-let insertionEnd = abc.index(start, offsetBy: insertion.characters.count)
+let insertionEnd = abc.index(start, offsetBy: insertion.count)
 let replacement = "HELLO"
-abc.replaceSubrange(start..<insertionEnd, with: replacement.characters)
+abc.replaceSubrange(start..<insertionEnd, with: replacement)
 //:
 if let repRange = abc.range(of: replacement) {
     abc[repRange]
 }
 //: Indices and string views
 let emojiNumbers = "0️⃣1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣9️⃣🔟"
-let indexOfFive = emojiNumbers.characters.index(of: "5️⃣")!
+let indexOfFive = emojiNumbers.index(of: "5️⃣")!
 emojiNumbers[indexOfFive..<emojiNumbers.endIndex]
 
-let utf8IndexOfFive = indexOfFive.samePosition(in: emojiNumbers.utf8)
+let utf8IndexOfFive = indexOfFive.samePosition(in: emojiNumbers.utf8)!
 emojiNumbers.utf8[emojiNumbers.utf8.startIndex..<utf8IndexOfFive]
 
 //: ### Split String

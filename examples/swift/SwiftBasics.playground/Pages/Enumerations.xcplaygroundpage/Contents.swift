@@ -8,7 +8,7 @@ import Foundation
 enum Direction {
     case up, down, left, right
 }
-
+let dir = Direction.up
 Direction.up
 //: ### Base Type
 enum Suit: String {
@@ -32,11 +32,11 @@ jack?.rawValue
 let card: (rank: Rank, suit: Suit) = (.three, .hearts)
 "\(card.rank.rawValue) of \(card.suit.rawValue)"
 
-let allSuits: [Suit] = [.spades, .hearts, .diamonds,. clubs]
+let allSuits: [Suit] = [.spades, .hearts, .diamonds, .clubs]
 let allRanks: [Rank] = [.two, .three, .four, .five, .six, .seven, .eight, .nine, .ten, .jack, .queen, .king, .ace]
 
 var deck: [(Rank, Suit)] = allSuits.flatMap {
-    suit in allRanks.flatMap {
+    suit in allRanks.compactMap {
         rank in (rank, suit)
     }
 }

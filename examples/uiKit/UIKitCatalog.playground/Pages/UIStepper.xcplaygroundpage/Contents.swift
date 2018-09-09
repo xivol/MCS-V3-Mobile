@@ -45,3 +45,4 @@ imageSteps.addTarget(controller, action: #selector(Controller.valueChanged(sende
 containerView.addSubview(imageSteps)
 
 PlaygroundPage.current.liveView = containerView
+//: [Previous](@previous) | [Table of Contents](TableOfContents) | [Next](@next)

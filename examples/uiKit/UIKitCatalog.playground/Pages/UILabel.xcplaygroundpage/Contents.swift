@@ -16,3 +16,4 @@ label.font = UIFont(name: "AmericanTypewriter", size: 32)
 // for other font family names visit http://iosfonts.com/
 
 PlaygroundPage.current.liveView = label
+//: [Previous](@previous) | [Table of Contents](TableOfContents) | [Next](@next)

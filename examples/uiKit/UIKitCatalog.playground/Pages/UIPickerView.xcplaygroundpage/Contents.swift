@@ -71,3 +71,4 @@ PlaygroundPage.current.liveView = slotView
 slotView.selectRow(1000, inComponent: 0, animated: true)
 slotView.selectRow(1000, inComponent: 1, animated: true)
 slotView.selectRow(1000, inComponent: 2, animated: true)
+//: [Previous](@previous) | [Table of Contents](TableOfContents) | [Next](@next)

@@ -25,3 +25,4 @@ stackView.axis = .horizontal
 stackView.spacing = 1
 
 PlaygroundPage.current.liveView = stackView
+//: [Previous](@previous) | [Table of Contents](TableOfContents) | [Next](@next)

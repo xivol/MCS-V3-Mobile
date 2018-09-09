@@ -46,3 +46,4 @@ minMaxSlider.addTarget(controller, action: #selector(Controller.valueChanged(sen
 imageSlider.addTarget(controller, action: #selector(Controller.valueChanged(sender:)), for: .valueChanged)
 
 PlaygroundPage.current.liveView = containerView
+//: [Previous](@previous) | [Table of Contents](TableOfContents) | [Next](@next)

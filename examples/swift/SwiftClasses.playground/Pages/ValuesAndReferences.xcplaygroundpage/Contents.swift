@@ -101,7 +101,7 @@ annasPhone.number
 
 print("Unowned Refernce:")
 anna = nil
-//annasPhone.owner.name
+// annasPhone.owner.name
 //: ****
 //: [Table of Contents](TableOfContents) · [Previous](@previous) · [Next](@next)
 

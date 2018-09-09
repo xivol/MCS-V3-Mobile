@@ -20,10 +20,12 @@ fibonachi.prefix(upTo: 10)
 fibonachi.suffix(from: 10)
 //: ### Searching Arrays
 fibonachi.index(of: 377)
-fibonachi.index(where: {
+if let ind = fibonachi.index(where: {
     elem in
     return elem > 99 && elem < 1000
-})
+}) {
+    fibonachi[ind]
+}
 //: ### Spliting Arrays
 fibonachi.split(separator: 89)
 fibonachi.split(whereSeparator: {
@@ -50,17 +52,15 @@ fibStrings.map({
     Int($0)
 })
 //: The `flatMap(_:)` method works similar to `map(_:)` but the result contains only non-nil values.
-fibStrings.flatMap({
-    Int($0)
-})
+fibStrings.compactMap(Int.init(_:))
 
 //: `reduce(_:,_:)`
-fibonachi[0...5].reduce(0, {
+fibonachi[0...5].reduce(1, {
     sum, elem in
-    sum + elem
+    sum * elem
 })
 
-fibonachi.reduce(0) {
+fibonachi[0...5].reduce(0) {
     $0 + $1
 }
 //: - Experiment: Every divider of first 20 fibonachi numbers.

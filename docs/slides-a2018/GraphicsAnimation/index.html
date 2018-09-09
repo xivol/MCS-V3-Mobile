@@ -1,0 +1,603 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>MADe with Swift.  Graphics &amp; Animation</title>
+
+		<link rel="stylesheet" href="../css/reveal.css">
+		<link rel="stylesheet" href="../css/theme/swift.css">
+		<!-- Theme used for syntax highlighting of code included in main theme -->
+		<!-- Printing and PDF exports -->
+		<script type="text/javascript">
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+ 		</script>
+		<style>
+		#swift-bird{
+			-webkit-clip-path: polygon(25% 0%, 75% 0%, 90% 50%, 75% 100%, 25% 100%, 10% 50%);
+			clip-path: polygon(25% 0%, 75% 0%, 90% 50%, 75% 100%, 25% 100%, 10% 50%);
+			/*max-height: 100%*/
+		}
+		</style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="topbar">
+				<div class="breadcrumbs">
+				</div>
+			</div>
+			<div class="slides">
+				<section>
+					<h3><a href="https://xivol.github.io/MCS-V3-Mobile/">MCSv3</a></h3>
+					<h1>Mobile Development</h1>
+					<p>
+						</br>Ilya Loshkarev</br>
+						<a href="mailto:loshkarev.i@gmail.com">loshkarev.i@gmail.com</a>
+					</p>
+					<p class="footer">
+						<br>SFEDU 2017
+					</p>
+				</section>
+				<section>
+					<h3 class="hidden">Overview</h3>
+					<div class="row">
+						<div class="col">
+						<ul>
+							<li>
+								<a href="#/2">Graphics</a>
+							</li>
+							<li>
+								<a href="#/3">Layers</a>
+							</li>
+							<li>
+								<a href="#/4">Animation</a>
+							</li>
+							<!--<li>
+								<a href="#/5">Dynamics</a>
+							</li>-->
+							<li>
+								<a href="#/5">Processing Images</a>
+							</li>
+						</ul>
+						</div>
+						<div class="col">
+							<img id="swift-bird" src="../img/puffin.jpg" />
+						</div>
+					</div>
+				</section>
+<!--Graphics 	-->
+				<section>
+					<section data-background="../img/graphics.jpg">
+						<h1>Graphics</h1>
+					</section>
+					<section>
+						<h3>Graphics Context</h3>
+						<p>
+							Context contains drawing parameters <br>and all information needed to render the paint
+						</p>
+						<p>
+							Graphical Contexts are organized in form of a stack
+						</p>
+					</section>
+					<section>
+						<h3>Current Context</h3>
+						<pre><code class="swift" src="CustomView.swift">
+						override func draw(_ rect: CGRect) {
+							// Get view's current graphics context
+							if let context = UIGraphicsGetCurrentContext() {
+								/* draw something */
+							}
+						}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Image Context</h3>
+						<pre><code class="swift" data-noheader>
+							// Create bitmap and make it current context
+							UIGraphicsBeginImageContext(image.size)
+							// Copy image into current context
+							image.draw(in: CGRect(origin: CGPoint.zero,
+									size: image.size))
+							/* draw something  on top of the image*/
+							// Return an image from current bitmap-based context
+							image = UIGraphicsGetImageFromCurrentImageContext()
+							// Remove current bitmap context
+							UIGraphicsEndImageContext()
+						</code></pre>
+					</section>
+					<section>
+						<h3>Drawing with UI Graphics</h3>
+						<p>
+							All drawing happens in current graphics context
+						</p>
+						<pre><code data-noheader>
+							func drawLine(from fromPoint: CGPoint, to toPoint: CGPoint) {
+								// Create Path
+								let linePath = UIBezierPath()
+								linePath.moveToPoint(fromPoint)
+								linePath.addLineToPoint(toPoint)
+								// Set up context parameters
+								UIColor.blue.setStroke()
+								linePath.lineWidth = 10
+								linePath.lineCapStyle = .round
+								// Draw path in context
+								linePath.stroke()
+							}
+						</code></pre>
+						<p class="notice">
+							Draw order is important
+						</p>
+						<p>
+							Paths are drawn on top of each other
+						</p>
+					</section>
+					<section>
+						<h3>Drawing with Core Graphics</h3>
+						<pre><code data-noheader>
+							context.addRect(rect: CGRect(x: 0, y:0,
+							                             width: 250, height: 250))
+							context.setFillColor(UIColor.white.cgColor)
+							context.setStrokeColor(UIColor.black.cgColor)
+							context.setLineWidth(5)
+							context.fillPath()
+							context.strokePath()
+						</code></pre>
+					</section>
+					<section>
+						<h3>Core Graphics Gradient</h3>
+						<pre><code class="swift" src="CustomButton.swift">
+						let colors = [startColor.cgColor, endColor.cgColor]
+						let colorLocations:[CGFloat] = [0.0, 1.0]
+						let colorSpace = CGColorSpaceCreateDeviceRGB()
+						let gradient = CGGradient(colorsSpace: colorSpace,
+						                          colors: colors as CFArray,
+						                          locations: colorLocations)
+						context.drawLinearGradient(gradient,
+						                       start: CGPoint.zero,
+						                       end: CGPoint(x: 1, y: 1),
+						                       options: .drawsAfterEndLocation)
+						</code></pre>
+					</section>
+				</section>
+<!--	Layers		-->
+				<section>
+					<section data-background="../img/layers.jpg">
+						<h1>Layers</h1>
+					</section>
+					<section>
+						<h3>Core Graphics Layer</h3>
+						<p>An offscreen context for reusing content <br> drawn with Core Graphics</p>
+						<ul>
+							<ul>
+								<li>Repeated drawing</li>
+								<li>Offscreen rendering</li>
+							</ul>
+						</ul>
+					</section>
+					<section>
+						<h3>Creating a Layer</h3>
+						<pre><code class="swift" data-noheader>
+							let layer = CGLayer(context, size: CGSize(width: 100, height: 100), auxiliaryInfo: nil)
+							let layerContext = layer?.context
+							/* draw something */
+							context.draw(layer, at: CGPoint.zero)
+						</code></pre>
+					</section>
+					<section>
+						<h3>Core Animation Layer</h3>
+						<p>
+							An object that manages image-based content <br>and allows you to perform animations on that content
+						</p>
+						<p class="notice">
+							Completely unrelated to <code>CGLayer</code>
+						</p>
+					</section>
+					<section>
+						<h3>View's Layer</h3>
+						<p>
+							Every view has underlying CALayer
+						</p>
+						<pre><code class="swift" data-noheader>
+							view.layer.contents = UIImage(named: "swift")?.cgImage
+							// Layers can have sublayers
+							let sublayer = CALayer()
+							sublayer.frame = CGRect(x: 50, y: 50, width: 100, height: 100)
+							sublayer.backgroundColor = UIColor.red.cgColor
+							view.layer.addSublayer(sublayer)
+						</code></pre>
+						<p>
+							Layers are rendered by the GPU
+						</p>
+					</section>
+					<section>
+						<h3>Blessings of GPU Rendering</h3>
+						<br/>
+						<ul>
+							<li><em>Fast graphics</em> &ndash; layers are optimized for better use of graphical hardware</li>
+							<li><em>Percise animations</em> &ndash; Core Animation allows for more animation control and complexity then UIKit</li>
+							<li><em>Rasterization control</em> &ndash; layer content can be rasterized once and stored as bitmap</li>
+						</ul>
+					</section>
+					<section>
+						<h3>So Many Layers</h3>
+						<img src="../img/CALayerTour.png" />
+						<small><a href="https://github.com/scotteg/LayerPlayer">https://github.com/scotteg/LayerPlayer</a></small>
+					</section>
+					<section>
+						<h3>Honorable Mention: CAMetalLayer</h3>
+						<div class="row">
+							<div class="col">
+								<img src="../img/metal-logo.png" class="center"/>
+							</div>
+							<div class="col">
+								Allows to use 3d rendering pipeline(shaders) in a layer
+							</div>
+						</div>
+					</section>
+				</section>
+<!--	Animation		-->
+				<section>
+					<section data-background="../img/animation.gif">
+						<h1>Animation</h1>
+					</section>
+					<section>
+						<h3>Simple Animation</h3>
+						<pre><code class="swift" data-noheader>
+							// Rotate view 180 degrees
+							UIView.animate(
+								withDuration: 0.25, // length of animation in seconds
+								delay: 0.0, // animation start delay
+								options: [.curveLinear], // timing curve
+								animations: { // animation closure
+									view.transform = view.transform.rotated(by: CGFloat(M_PI))},
+								completion: { finished in // called after animation is complete
+									view.transform = CGAffineTransform.identity
+							})
+						</code></pre>
+						<p>
+							Interpolates values of the view's properties
+						</p>
+						<p class="notice">
+							Uses shortest path between the values <br />(360&deg; rotation does nothing!)
+						</p>
+					</section>
+					<section>
+						<h3>Animatable View Properties</h3>
+						<div class="row" >
+						<ul class="col " style="text-align:right; border-right: solid 2pt #FF8D3C;">
+							<li>frame</li>
+							<li>bounds</li>
+							<li>center</li>
+						</ul>
+						<ul class="col" style="padding-left:0.5em;">
+							<li>transform</li>
+							<li>alpha</li>
+							<li>backgroundColor</li>
+							<li>contentStretch</li>
+						</ul>
+						</div>
+						<p class="notice">
+							You should never animate position properties<br /> of a view with Auto Layout cnstraints
+						</p>
+					</section>
+					<section>
+						<h3>Animation Options</h3>
+						<p>
+							Timing Curve – defines how fast values change
+						</p>
+						<div class="row">
+							<div class="col">
+								<code class="hljs-type"><ul>
+									<li>linear</li>
+									<li>easeIn</li>
+									<li>easeOut</li>
+									<li>easeInOut</li>
+								</ul></code>
+							</div>
+							<div class="col">
+								<img src="../img/easing.png" style="border: solid 2pt #FF8D3C;"/>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h3>Other Options</h3>
+						<ul>
+							<li><code class="hljs-type">repeat</code> &ndash; repeats animation ad infinum</li>
+							<li><code class="hljs-type">allowUserInteractions</code> &ndash; allows user interactions </li>
+							<li><code class="hljs-type">beginFromCurrentState</code> &ndash; animation started in the middle <br>
+								of another animation will use current values of a view</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Keyframe Animation</h3>
+						<p>
+							Interpolates values between user defined keyframes
+						</p>
+						<pre><code class="swift" data-noheader>
+							// Rotate view 360 degrees
+							let duration = 1.0
+							UIView.animateKeyframes(
+								withDuration: duration,
+								delay: 0.0,
+								options: [.calculationModeCubic], // interpolation method
+								animations: {  /* define frames here */ }
+							)
+						</code></pre>
+						</section>
+						<section>
+							<h3>Keyframes</h3>
+							<pre><code class="swift" data-noheader>
+								// Rotate 360 degrees animations closure
+								let frames = 6
+								let angle = 2 * M_PI / Double(frames)
+								let frameDuration = duration / Double(frames)
+								for i in 0..&lt;frames {
+									UIView.addKeyframe(
+										withRelativeStartTime: Double(i) * frameDuration,
+										relativeDuration: frameDuration,
+										animations: {
+											sender.transform = sender.transform.rotated(by: CGFloat(angle))
+									})
+								}
+						</code></pre>
+						<p>
+							Each keyframe defines an animation <br> with its own delay and duration
+						</p>
+					</section>
+					<section>
+						<h3>View Property Animator</h3>
+						<pre><code class="swift" data-noheader>
+								animator = UIViewPropertyAnimator(duration: 0, curve: .linear)
+								{
+									self.view.center = newLocation
+									self.view.background-color = newColor
+								}
+
+								animator.fractionComplete = 0.5
+						</code></pre>
+						<p>
+							Allows to dynamically modify animations before they finish
+						</p>
+						<p class="notice">
+							Avaliable since iOS 10
+						</p>
+					</section>
+					<section>
+						<h3>UIView Animation Limits</h3>
+						<div class="row">
+							<div class="col">
+								<ul >
+									<li>Animation is limited to view's properties</li>
+									<li>Doesn't allow custom timing functions</li>
+									<li>CPU capped rendering</li>
+								</ul>
+							</div>
+							<div class="col">
+								<img src="../img/bounce-animation.gif"  class="center"/>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h3>Layer Animations</h3>
+						<div class="row">
+							<div class="col">
+								<ul>
+									<li>Processed on GPU</li>
+									<li>Shape Transitions</li>
+									<li>3D Transformations</li>
+									<li>Clipping Animations</li>
+								</ul>
+							</div>
+							<div class="col">
+								<img src="../img/layer-animation.gif" class="centered"/>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h3>Animatable Layer Properties</h3>
+						<small>
+							<code class="hljs-type">
+								anchorPoint
+								backgroundColor
+								backgroundFilters
+								borderColor
+								borderWidth
+								bounds
+								compositingFilter
+								contents
+								contentsRect
+								cornerRadius
+								doubleSided
+								filters
+								frame
+								hidden
+								mask
+								masksToBounds
+								opacity
+								position
+								shadowColor
+								shadowOffset
+								shadowOpacity
+								shadowPath
+								shadowRadius
+								sublayers
+								sublayerTransform
+								transform
+								zPosition
+							</code>
+						</small>
+						<p class="notice">
+							Any of the layer's properties can be animated
+						</p>
+					</section>
+					<section>
+						<h3>Basic Animation</h3>
+						<pre><code class="swift" data-noheader>
+							let fillAnimation = CABasicAnimation(keyPath: "fillColor")
+							fillAnimation.fromValue = UIColor.clear.cgColor
+							fillAnimation.toValue = UIColor.white.cgColor
+							fillAnimation.duration = 1
+							layer.add(fillAnimation, forKey: "fill animation")
+						</code></pre>
+						<p class="notice">
+							Basic animation animates one property at a time
+						</p>
+					</section>
+					<section>
+						<h3>Group Animation</h3>
+						<pre><code class="swift" data-noheader>
+							end.beginTime = 1
+							let groupAnimation = CAAnimationGroup()
+							groupAnimation.animations = [start,end]
+							groupAnimation.duration = 3
+							circle.add(groupAnimation, forKey: "group stroke")
+						</code></pre>
+						<p>
+							<code class="hljs-type">beginTime</code> – sets the delay in the group animation
+						</p>
+					</section>
+					<section>
+						<h3>Keyframe Layer Animation</h3>
+						<pre><code class="swift" data-noheader>
+							let keyframeAnimation = CAKeyframeAnimation(keyPath: "path")
+							keyframeAnimation.values = []
+							for points in 5...10 {
+							    let starPath = UIBezierPath(starWithNumberOfPoints: points, centeredAt: view.center, innerRadius: view.bounds.width / 6, outerRadius: view.bounds.width / 3)
+							    keyframeAnimation.values?.append(starPath.cgPath)
+							}
+							keyframeAnimation.duration = 5
+							keyframeAnimation.autoreverses = true
+							star.add(keyframeAnimation, forKey: "points")
+						</code></pre>
+					</section>
+				</section>
+<!--	Dynamics -->
+<!--	Processing Images		-->
+				<section>
+					<section data-background="../img/imaging.png">
+						<h1>Processing Images</h1>
+					</section>
+					<section>
+						<h3>What is an Image?</h3>
+						<ul>
+							<li><code class="hljs-type">UIImage</code> &ndash; higher-level image object. Immutable, created from existing image content</li>
+							<li><code class="hljs-type">CGImage</code> &ndash; bitmap representation of an image. Mutable</li>
+							<li><code class="hljs-type">CIImage</code> &ndash; a "recipe" for an image, executed only when you request that an image be rendered for display or output</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Image ⇄ Image</h3>
+						<pre><code class="swift" data-noheader>
+							cgImage = uiImage.cgImage // nil if uiImage contains ciImage reference
+							ciImage = uiImage.ciImage // nil if uiImage contains ciImage reference ?
+							uiImage = UIImage(ciImage: ciImage)
+							uiImage = UIImage(cgImage: cgImage)
+						</code></pre>
+						<p class="notice">
+							<code class="hljs-type">UIImage</code> can display <code class="hljs-type">CIImage</code> but to save it as a file <br />
+							it has to be rendered first
+						</p>
+					</section>
+					<section>
+						<h3>Image Filtering</h3>
+						<div class="row">
+							<div class="col">
+								<img src="../img/filter-cat-before.jpg" alt="cat before" class="small">
+							</div>
+							<div class="col arrow-right">
+								<img src="../img/filter-cat-after.jpg" alt="cat after" class="small">
+							</div>
+						</div>
+						<small>
+							Filter is a piece of software that examines an input image pixel by pixel<br />
+							and algorithmically applies some effect in order to create an output image
+						</small>
+					</section>
+					<section>
+						<h3>Discovering Filters</h3>
+						<pre><code class="swift" data-noheader>
+							CIFilter.filterNames(inCategories: nil) // all availiable
+							CIFilter.filterNames(inCategory: category)
+						</code></pre>
+						<p>
+							Core Image provides methods that let you query the system <br>
+							for the available built-in filters
+						</p>
+					</section>
+					<section>
+						<h3>Filter Category</h3>
+						<ul>
+							<li>The type of effect produced by the filter</li>
+							<li>The usage of the filter (still image, video, etc)</li>
+							<li>Whether the filter is provided by Core Image</li>
+						</ul>
+						<p class="notice">
+							A filter can be a member of more than one category
+						</p>
+					</section>
+					<section>
+						<h3>Filter Configuration</h3>
+						<pre><code class="swift" data-noheader>
+							let filter = CIFilter(name: "CIThermal")
+							filter.setValue(uiImage.ciImage!, forKey: kCIInputImageKey)
+							if let output = filter.outputImage {
+								let cgImage = CIContext().createCGImage(output, from: output.extent)
+								uiImage = UIImage(cgImage: cgImage)
+							}
+						</code></pre>
+						<p class="notice">
+							There are some useful Swift wrappers for filters out there: <br />
+							<a href="https://github.com/jefflovejapan/CIFilterKit">CIFilterKit</a>
+						</p>
+					</section>
+					<section>
+						<h3>Filter Chaining</h3>
+						<pre><code class="swift" data-noheader>
+							let ciImage = CIImage(image: uiImage)
+							let chainedResult = ciImage.applyingFilter("CIPhotoEffectProcess",
+								withInputParameters: nil).applyingFilter("CIBloom",
+									withInputParameters: [
+										kCIInputRadiusKey: 10.0,
+										kCIInputIntensityKey: 1.0
+									])
+						</code></pre>
+						<p class="notice">
+							Core Image combines chained filters into a single operation
+						</p>
+					</section>
+				</section>
+<!--	Resources			-->
+				<section>
+					<h3 style="display:none;">Related Resources</h3>
+					<ul>
+						<li><a href="https://developer.apple.com/library/content/documentation/2DDrawing/Conceptual/DrawingPrintingiOS/GraphicsDrawingOverview/GraphicsDrawingOverview.html">Cocoa Drawing Overview – Apple Developer</a></li>
+						<li><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/CoreAnimation_guide/Introduction/Introduction.html">Core Animation Programming Guide – Apple Developer</a></li>
+						<li><a href="https://developer.apple.com/library/content/documentation/GraphicsImaging/Conceptual/CoreImaging/ci_tasks/ci_tasks.html">Core Image Programming Guide – Apple Developer</a></li>
+						<li><a href="https://developer.apple.com/library/content/documentation/GraphicsImaging/Reference/CoreImageFilterReference/#/">Filter Reference – Apple Developer</a></li>
+					</ul>
+				</section>
+			</div>
+		</div>
+
+		<script src="../lib/js/head.min.js"></script>
+		<script src="../js/reveal.js"></script>
+		<script src="../js/swift.js"></script>
+		<svg height="0" xmlns="http://www.w3.org/2000/svg">
+		    <filter id="drop-shadow">
+		        <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+		        <feOffset dx="12" dy="12" result="offsetblur"/>
+		        <feFlood flood-color="rgba(0,0,0,0.5)"/>
+		        <feComposite in2="offsetblur" operator="in"/>
+		        <feMerge>
+		            <feMergeNode/>
+		            <feMergeNode in="SourceGraphic"/>
+		        </feMerge>
+		    </filter>
+		</svg>
+	</body>
+</html>

@@ -121,3 +121,4 @@ let delegate = Controller()
 collectionView.delegate = delegate
 
 PlaygroundPage.current.liveView = collectionView
+//: [Previous](@previous) | [Table of Contents](TableOfContents) | [Next](@next)

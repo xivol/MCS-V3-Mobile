@@ -60,3 +60,4 @@ segmentedControl.addTarget(colorController, action: #selector(Controller.valueCh
 containerView.addSubview(segmentedControl)
 
 PlaygroundPage.current.liveView = containerView
+//: [Previous](@previous) | [Table of Contents](TableOfContents) | [Next](@next)

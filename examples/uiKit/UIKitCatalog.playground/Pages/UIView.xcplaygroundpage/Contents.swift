@@ -73,3 +73,4 @@ circleMask.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
 subviews[3].mask = circleMask
 
 PlaygroundPage.current.liveView = containerView
+//: [Previous](@previous) | [Table of Contents](TableOfContents) | [Next](@next)

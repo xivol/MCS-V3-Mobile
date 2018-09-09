@@ -8,13 +8,13 @@ let constant = "Constants are declared with 'let'"
 var variable = "Variables are declared with 'var'"
 variable = "You can assign a new value to a variable"
 //: You can declare multiple constants or variables in one line if you separate them with a comma:
-let a = 0, b = 0, c = 0
+let a = 0, b = "asas", c = 0
 //:### Basic Types
 let boolean: Bool = true
 
 let long: Int = Int.max  // Int64 for x64 systems
 let integer: Int32 = Int32.max
-let short: Int16 = Int16.max
+let short: Int16 = Int16.min
 let byte: Int8 = Int8.max
 let ubyte: UInt8 = UInt8.max // there are also UInt16, UInt32, UInt62
 
@@ -97,7 +97,7 @@ while whileCondition {
     whileCondition = false
 }
 //: Iteration with post-condition
-var repeatCondition = false
+let repeatCondition = false
 repeat {
     repeatCondition
 } while repeatCondition

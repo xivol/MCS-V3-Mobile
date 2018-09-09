@@ -36,9 +36,11 @@
 		<string>MKDirectionsModePedestrian</string>
 	</array>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>"Needs location in background"</string>
+	<string>&quot;Needs location in background&quot;</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>"Need location access"</string>
+	<string>&quot;Need location access&quot;</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Needs location</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
