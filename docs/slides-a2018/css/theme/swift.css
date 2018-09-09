@@ -447,38 +447,38 @@ body {
 /*********************************************
  * HLJS
  *********************************************/
+
 /*.hljs {
   display: block;
   overflow-x: auto;
-  padding: 0.5em; }*/
+  padding: 0.5em; }
+ */
 
 .hljs-comment,
 .hljs-quote {
-  color: #41B645; }
+  color: #5dff62; }
 
 .hljs-keyword {
-/*  color: #CA5CA9; */
-  color: #ff6ed4; }
+/*  color: #CA5CA9;
+  color: #ff6ed4; */
+  color: #a19eff; }
 
 .hljs-section,
 .hljs-type,
 .hljs-built_in,
 .hljs-builtin-name,
-.hljs-name {
-  color: #13DAEC; }
+.hljs-name,
+.hljs-literal,
+.hljs-number,
+.hljs-subst {
+ color: #47c9d8; }
 
 .hljs-meta,
 .hljs-preprocessor {
   color: #FF8D3C; }
 
 .hljs-string {
-/*color: #E43944;*/
-  color: #ff4d58; }
-
- .hljs-literal,
- .hljs-number,
- .hljs-subst {
-  color: #1896A5; }
+  color: #ff8ef9; }
 
 /*********************************************
  * TOPBAR
